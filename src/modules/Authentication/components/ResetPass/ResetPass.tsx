@@ -30,7 +30,7 @@ export default function ResetPass() {
   const onSubmit = async (data: ResetPassFormData) => {
     try {
       await axios.post(
-        "https://upskilling-egypt.com:3006/api/v1/Users/Reset",
+        "https://upskilling-egypt.com:3003/api/v1/Users/Reset",
         data
       );
 

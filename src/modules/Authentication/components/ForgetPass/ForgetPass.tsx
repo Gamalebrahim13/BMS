@@ -16,17 +16,23 @@ export default function ForgetPass() {
     handleSubmit,
   } = useForm<ForgetPassFormData>();
 
-  const onSubmit = async (data: ForgetPassFormData) => {
-    try {
-      console.log(data);
+ const onSubmit = async (data: ForgetPassFormData) => {
+  try {
+    const res = await axios.post(
+      "https://upskilling-egypt.com:3003/api/v1/Users/Reset/Request",
+      data
+    );
 
-      toast.success("Check your email");
-      navigate("/reset-password");
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
-    }
-  };
+    toast.success(res?.data?.message || "Check your email");
 
+    
+    localStorage.setItem("resetEmail", data.email);
+
+    navigate("/reset-password");
+  } catch (error: any) {
+    toast.error(error?.response?.data?.message || "Something went wrong");
+  }
+};
   return (
     <>
       <div className="text-white mb-10">
