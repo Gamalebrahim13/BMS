@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: "upskilling-egypt.com:3003/api/v1", // غيرها بالـ API بتاعك
+  baseURL: "https://upskilling-egypt.com:3003/api/v1", 
+  baseURL: "https://upskilling-egypt.com:3003/api/v1", // غيرها بالـ API بتاعك
   timeout: 5000,
 });
 

@@ -1,13 +1,59 @@
-import axiosClient from "../module/axiosClient";
+import axiosClient from "../axiosClient";
+
+// Types
+
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+interface RegisterData {
+  userName: string;
+  email: string;
+  country: string;
+  phoneNumber: string;
+  password: string;
+  confirmPassword: string;
+  profileImage?: File;
+}
+
+interface VerifyData {
+  email: string;
+  code: string;
+}
+
+interface ChangePasswordData {
+  oldPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+interface RequestResetPasswordData {
+  email: string;
+}
+
+interface ResetPasswordData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  seed: string;
+}
 
 
 // Login
-export const login = (data: { email: string; password: string }) => {
-  return axiosClient.post("/Users/Login", data).then((res) => res.data);
+
+export const login = async (data: LoginData) => {
+  const response = await axiosClient.post(
+    "/Users/Login",
+    data
+  );
+
+  return response.data;
 };
 
-// Register (FormData because of file upload)
-export const register = (data: any) => {
+// Register
+
+export const register = async (data: RegisterData) => {
   const formData = new FormData();
 
   formData.append("userName", data.userName);
@@ -15,44 +61,74 @@ export const register = (data: any) => {
   formData.append("country", data.country);
   formData.append("phoneNumber", data.phoneNumber);
   formData.append("password", data.password);
-  formData.append("confirmPassword", data.confirmPassword);
+  formData.append(
+    "confirmPassword",
+    data.confirmPassword
+  );
 
   if (data.profileImage) {
-    formData.append("profileImage", data.profileImage);
+    formData.append(
+      "profileImage",
+      data.profileImage
+    );
   }
 
-  return axiosClient.post("/Users/Register", formData).then((res) => res.data);
+  const response = await axiosClient.post(
+    "/Users/Register",
+    formData
+  );
+
+  return response.data;
 };
 
-// Verify account
-export const verifyAccount = (data: { email: string; code: string }) => {
-  return axiosClient.put("/Users/verify", data).then((res) => res.data);
+// Verify Account
+
+export const verifyAccount = async (
+  data: VerifyData
+) => {
+  const response = await axiosClient.put(
+    "/Users/verify",
+    data
+  );
+
+  return response.data;
 };
 
-// Change password (logged in user)
-export const changePassword = (data: {
-  oldPassword: string;
-  newPassword: string;
-  confirmNewPassword: string;
-}) => {
-  return axiosClient
-    .put("/Users/ChangePassword", data)
-    .then((res) => res.data);
+// Change Password
+
+export const changePassword = async (
+  data: ChangePasswordData
+) => {
+  const response = await axiosClient.put(
+    "/Users/ChangePassword",
+    data
+  );
+
+  return response.data;
 };
 
-// Request reset password (forgot password)
-export const requestResetPassword = (data: { email: string }) => {
-  return axiosClient
-    .post("/Users/Reset/Request", data)
-    .then((res) => res.data);
+// Request Reset Password
+
+export const requestResetPassword = async (
+  data: RequestResetPasswordData
+) => {
+  const response = await axiosClient.post(
+    "/Users/Reset/Request",
+    data
+  );
+
+  return response.data;
 };
 
-// Reset password (final step)
-export const resetPassword = (data: {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  seed: string;
-}) => {
-  return axiosClient.post("/Users/Reset", data).then((res) => res.data);
+// Reset Password
+
+export const resetPassword = async (
+  data: ResetPasswordData
+) => {
+  const response = await axiosClient.post(
+    "/Users/Reset",
+    data
+  );
+
+  return response.data;
 };
