@@ -5,9 +5,7 @@ const axiosClient = axios.create({
   // غيرها بالـ API بتاعك
   timeout: 5000,
 });
-git add .
-git commit -m "update"
-git push origin develop
+
 // Request Interceptor
 axiosClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
