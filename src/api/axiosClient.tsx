@@ -2,10 +2,12 @@ import axios from "axios";
 
 const axiosClient = axios.create({
   baseURL: "https://upskilling-egypt.com:3003/api/v1", 
-  baseURL: "https://upskilling-egypt.com:3003/api/v1", // غيرها بالـ API بتاعك
+  // غيرها بالـ API بتاعك
   timeout: 5000,
 });
-
+git add .
+git commit -m "update"
+git push origin develop
 // Request Interceptor
 axiosClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
