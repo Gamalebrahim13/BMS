@@ -106,7 +106,7 @@ export default function Login() {
 
         <div className="links mt-3 text-white font-light flex justify-between text-sm">
           <Link to="/register"> Register Now ?</Link>
-          <Link to="/forgetpass"> Forget Password ?</Link>
+          <Link to="/forget-password"> Forget Password ?</Link>
         </div>
 
         <button
@@ -118,3 +118,4 @@ export default function Login() {
     </>
   );
 }
+
