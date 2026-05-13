@@ -17,7 +17,7 @@ interface RegisterData {
   profileImage?: File;
 }
 
-interface VerifyData {
+export interface VerifyData {
   email: string;
   code: string;
 }
