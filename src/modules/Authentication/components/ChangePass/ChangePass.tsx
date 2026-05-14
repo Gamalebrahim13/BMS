@@ -11,12 +11,6 @@ export default function ChangePass() {
 
   const navigate = useNavigate();
 
-  // type ChangePasswordForm = {
-  //   oldPassword: string;
-  //   newPassword: string;
-  //   confirmNewPassword: string;
-  // };
-
   let {
     register,
     formState: { errors },
