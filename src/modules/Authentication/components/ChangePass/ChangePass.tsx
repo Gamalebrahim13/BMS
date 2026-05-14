@@ -36,7 +36,7 @@ export default function ChangePass() {
       const response = await changePassword(data);
       navigate("/login");
       toast.success("Change Password Successfully");
-    }  catch (error: any) {
+    } catch (error: any) {
       toast.error(error?.response?.data?.message);
     } finally {
       setLoading(false);
