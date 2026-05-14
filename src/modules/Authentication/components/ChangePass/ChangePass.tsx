@@ -37,7 +37,7 @@ export default function ChangePass() {
       navigate("/login");
       toast.success("Change Password Successfully");
     } catch (error: any) {
-      toast.error("Feild to change password");
+      toast.error(error?.response?.data?.message);
     } finally {
       setLoading(false);
     }
