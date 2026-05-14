@@ -1,34 +1,32 @@
-import { useState } from "react";
+import { useState, type InputHTMLAttributes } from "react";
 import type { FieldError, UseFormRegisterReturn } from "react-hook-form";
-
 import {
   IoEyeOffOutline,
   IoEyeOutline,
 } from "react-icons/io5";
 
-type InputProps = {
+type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
-  placeholder: string;
-  type?: string;
-  required?: boolean;
   register: UseFormRegisterReturn;
-  error?: FieldError; 
+  error?: FieldError;
+  required?: boolean;
 };
 
 export default function Input({
   label,
-  placeholder,
-  type = "text",
-  required = false,
   register,
   error,
+  required = false,
+  type = "text",
+  className = "",
+  ...rest
 }: InputProps) {
   const [showPassword, setShowPassword] =
     useState(false);
 
   const isPassword = type === "password";
 
-  const inputType = isPassword
+  const finalType = isPassword
     ? showPassword
       ? "text"
       : "password"
@@ -36,57 +34,59 @@ export default function Input({
 
   return (
     <div className="mb-4">
-      <div className="flex flex-col relative">
-        <label
-          htmlFor={register.name}
-          className="text-primary text-sm font-light mb-1"
-        >
-          {label}
+      {/* Label */}
+      <label className="text-primary text-sm font-light mb-1 block">
+        {label}
+        {required && (
+          <span className="text-red-500 ml-1">*</span>
+        )}
+      </label>
 
-          {required && (
-            <span className="text-red-500 ml-1">
-              *
-            </span>
-          )}
-        </label>
+      {/* Input */}
+      <div className="relative">
+        <input
+          {...register}
+          {...rest}
+          type={finalType}
+          className={`
+            w-full
+            bg-transparent
+            outline-none
+            text-white
+            placeholder:text-white/70
+            font-light
+            pr-10
+            ${className}
+          `}
+        />
 
-        <div className="relative flex items-center">
-          <input
-            {...register}
-            id={register.name}
-            type={inputType}
-            placeholder={placeholder}
-            aria-invalid={!!error}
-            className="bg-transparent font-light outline-none text-white placeholder:text-white placeholder:text-sm w-full pr-8"
-          />
-
-          {isPassword && (
-            <button
-              type="button"
-              onClick={() =>
-                setShowPassword(!showPassword)
-              }
-              className="absolute right-0 text-white text-md"
-            >
-              {showPassword ? (
-                <IoEyeOffOutline />
-              ) : (
-                <IoEyeOutline />
-              )}
-            </button>
-          )}
-        </div>
-
-        <hr className="border-white/20 mt-2" />
-      </div>
-
-      <div className="min-h-[20px]">
-        {error && (
-          <span className="text-primary text-sm">
-            {error.message}
-          </span>
+        {/* Password Toggle */}
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() =>
+              setShowPassword(!showPassword)
+            }
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-white"
+          >
+            {showPassword ? (
+              <IoEyeOffOutline />
+            ) : (
+              <IoEyeOutline />
+            )}
+          </button>
         )}
       </div>
+
+      {/* underline */}
+      <hr className="border-white/20 mt-2" />
+
+      {/* Error */}
+      {error && (
+        <span className="text-red-400 text-sm">
+          {error.message}
+        </span>
+      )}
     </div>
   );
-}  
+}
