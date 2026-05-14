@@ -1,33 +1,25 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { IoEyeOffOutline } from "react-icons/io5";
-import { IoEyeOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { changePassword } from "../../../../api/module/auth";
+import Input from "../../../Shared/Components/custominput";
+import type  { ChangePasswordData } from "../../../../api/module/auth";
 
 export default function ChangePass() {
   const [loading, setLoading] = useState(false);
-  const [showOldPassword, setShowOldPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
-  const navigate = useNavigate();
 
-  type ChangePasswordForm = {
-    oldPassword: string;
-    newPassword: string;
-    confirmNewPassword: string;
-  };
+  const navigate = useNavigate();
 
   let {
     register,
     formState: { errors },
     handleSubmit,
     watch,
-  } = useForm<ChangePasswordForm>();
+  } = useForm<ChangePasswordData>();
   const newPassword = watch("newPassword");
 
-  const onSubmit = async (data: ChangePasswordForm) => {
+  const onSubmit = async (data: ChangePasswordData) => {
     if (loading) return;
 
     setLoading(true);
@@ -37,7 +29,19 @@ export default function ChangePass() {
       navigate("/login");
       toast.success("Change Password Successfully");
     } catch (error: any) {
-      toast.error(error?.response?.data?.message);
+      const errors = error?.response?.data?.additionalInfo?.errors;
+
+      if (errors) {
+        Object.values(errors).forEach((messages: any) => {
+          if (Array.isArray(messages)) {
+            messages.forEach((msg: string) => {
+              toast.error(msg);
+            });
+          }
+        });
+      } else {
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      }
     } finally {
       setLoading(false);
     }
@@ -53,90 +57,43 @@ export default function ChangePass() {
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Old Password */}
-        <div className="flex flex-col mb-2 mt-5 relative ">
-          <label className="text-primary text-sm font-light mb-0.5  ">
-            Old Password
-          </label>
-          <div className="relative flex items-center">
-            <input
-              {...register("oldPassword", {
-                required: "field is required",
-              })}
-              type={showOldPassword ? "text" : "password"}
-              placeholder="Enter your Old Password"
-              className="bg-transparent font-light outline-none text-white placeholder:text-white placeholder:text-sm w-full "
-            />
-
-            <span
-              onClick={() => setShowOldPassword(!showOldPassword)}
-              className="absolute right-0 cursor-pointer text-white text-md ">
-              {showOldPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
-            </span>
-          </div>
-        </div>
-        <hr className=" border-white/20 " />
-        {errors.oldPassword && (
-          <span className="text-primary">{errors.oldPassword.message}</span>
-        )}
+        <Input
+          label="Old Password"
+          type="password"
+          placeholder="Enter Your Old Password"
+          required
+          register={register("oldPassword", {
+            required: "Required",
+          })}
+          error={errors.oldPassword}
+        />
 
         {/* New Password */}
 
-        <div className="flex flex-col mb-2 mt-5 relative ">
-          <label className="text-primary text-sm font-light mb-0.5  ">
-            Password
-          </label>
-          <div className="relative flex items-center">
-            <input
-              {...register("oldPassword", {
-                required: "field is required",
-              })}
-              type={showNewPassword ? "text" : "password"}
-              placeholder="Enter your New Password"
-              className="bg-transparent font-light outline-none text-white placeholder:text-white placeholder:text-sm w-full "
-            />
-
-            <span
-              onClick={() => setShowNewPassword(!showNewPassword)}
-              className="absolute right-0 cursor-pointer text-white text-md ">
-              {showNewPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
-            </span>
-          </div>
-        </div>
-        <hr className=" border-white/20 " />
-        {errors.newPassword && (
-          <span className="text-primary">{errors.newPassword.message}</span>
-        )}
+        <Input
+          label="New Password"
+          type="password"
+          placeholder="Enter Your New Password"
+          required
+          register={register("newPassword", {
+            required: "Required",
+          })}
+          error={errors.newPassword}
+        />
 
         {/* Confiremd New Password */}
-        <div className="flex flex-col mb-2 mt-5 relative ">
-          <label className="text-primary text-sm font-light mb-0.5  ">
-            Password
-          </label>
-          <div className="relative flex items-center">
-            <input
-              {...register("confirmNewPassword", {
-                required: "field is required",
-                validate: (value) =>
-                  value === newPassword || "Passwords do not match",
-              })}
-              type={showConfirmNewPassword ? "text" : "password"}
-              placeholder="Confirm New Password"
-              className="bg-transparent font-light outline-none text-white placeholder:text-white placeholder:text-sm w-full "
-            />
-
-            <span
-              onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
-              className="absolute right-0 cursor-pointer text-white text-md ">
-              {showConfirmNewPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
-            </span>
-          </div>
-        </div>
-        <hr className=" border-white/20 " />
-        {errors.confirmNewPassword && (
-          <span className="text-primary">
-            {errors.confirmNewPassword.message}
-          </span>
-        )}
+        <Input
+          label="Confirm Password"
+          type="password"
+          placeholder="Enter Your Confirme New Password"
+          required
+          register={register("confirmNewPassword", {
+            required: "Required",
+            validate: (value) =>
+              value === newPassword || "Passwords do not match",
+          })}
+          error={errors.confirmNewPassword}
+        />
 
         <button
           disabled={loading}
