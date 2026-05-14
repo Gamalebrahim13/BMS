@@ -2,12 +2,12 @@ import axiosClient from "../axiosClient";
 
 // Types
 
-interface LoginData {
+export interface LoginData {
   email: string;
   password: string;
 }
 
-interface RegisterData {
+export interface RegisterData {
   userName: string;
   email: string;
   country: string;
@@ -22,17 +22,17 @@ export interface VerifyData {
   code: string;
 }
 
-interface ChangePasswordData {
+export interface ChangePasswordData {
   oldPassword: string;
   newPassword: string;
   confirmNewPassword: string;
 }
 
-interface RequestResetPasswordData {
+export interface RequestResetPasswordData {
   email: string;
 }
 
-interface ResetPasswordData {
+export interface ResetPasswordData {
   email: string;
   password: string;
   confirmPassword: string;
