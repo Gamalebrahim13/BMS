@@ -3,6 +3,7 @@ import { verifyAccount, type VerifyData } from "../../../../api/module/auth";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import Input from "../../../Shared/Components/custominput";
 
 
 export default function Verfiy() {
@@ -41,7 +42,7 @@ export default function Verfiy() {
         </h3>
       </div>
          <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col mb-2 ">
+        {/* <div className="flex flex-col mb-2 ">
           <label className="text-primary text-sm font-light mb-0.5 ">
             E-mail
           </label>
@@ -61,7 +62,17 @@ export default function Verfiy() {
         <hr className="border-white/20" />
         {errors.email && (
           <span className="text-primary">{errors.email.message}</span>
-        )}
+        )} */}
+
+        <Input label="E-mail" placeholder="Enter your E-mail" register={register("email", {
+              required: "field is required",
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "Email is not valid",
+              },
+            })} error={errors.email && (
+          <span className="text-primary">{errors.email.message}</span>
+        )} type="text" required={true}  />
          <div className="flex flex-col mb-2 ">
           <label className="text-primary text-sm font-light mb-0.5 ">
             Code

@@ -1,8 +1,5 @@
 import { useState } from "react";
-import {
-  FieldError,
-  UseFormRegisterReturn,
-} from "react-hook-form";
+import type { FieldError, UseFormRegisterReturn } from "react-hook-form";
 
 import {
   IoEyeOffOutline,
@@ -15,7 +12,7 @@ type InputProps = {
   type?: string;
   required?: boolean;
   register: UseFormRegisterReturn;
-  error?: FieldError;
+  error?: FieldError; 
 };
 
 export default function Input({
