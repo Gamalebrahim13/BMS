@@ -53,32 +53,37 @@ export const login = async (data: LoginData) => {
 
 // Register
 
-export const register = async (data: RegisterData) => {
+export const registerUser = async (data: RegisterData) => {
   const formData = new FormData();
 
-  formData.append("userName", data.userName);
-  formData.append("email", data.email);
-  formData.append("country", data.country);
-  formData.append("phoneNumber", data.phoneNumber);
-  formData.append("password", data.password);
-  formData.append(
-    "confirmPassword",
-    data.confirmPassword
-  );
-
-  if (data.profileImage) {
-    formData.append(
-      "profileImage",
-      data.profileImage
-    );
+ formData.append("userName", data.userName.trim());
+  formData.append("email", data.email.trim());
+  formData.append("country", data.country.trim());
+  formData.append("phoneNumber", String(data.phoneNumber).trim());
+  if (data.password) {
+    formData.append("password", data.password.trim());
   }
-
+  if (data.confirmPassword) {
+    formData.append("confirmPassword", data.confirmPassword.trim());
+  }
+ if (data.profileImage) {
+    if (data.profileImage instanceof FileList && data.profileImage.length > 0) {
+      formData.append("profileImage", data.profileImage[0]);
+    } else if (data.profileImage instanceof File) {
+      formData.append("profileImage", data.profileImage);
+    }
+  }
   const response = await axiosClient.post(
     "/Users/Register",
-    formData
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data", 
+      },
+    }
   );
 
-  return response.data;
+  return response;
 };
 
 // Verify Account
