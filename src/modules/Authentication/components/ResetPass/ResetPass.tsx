@@ -3,8 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-
+import { HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
 type ResetPassFormData = {
   email: string;
   seed: string;
@@ -118,7 +117,7 @@ export default function ResetPass() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-0 cursor-pointer text-white text-md"
             >
-              {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+              {showPassword ? <HiOutlineEyeOff /> : <HiOutlineEye />}
             </span>
           </div>
         </div>
@@ -150,7 +149,7 @@ export default function ResetPass() {
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="absolute right-0 cursor-pointer text-white text-md"
             >
-              {showConfirmPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+              {showPassword ? <HiOutlineEyeOff /> : <HiOutlineEye />}
             </span>
           </div>
         </div>
