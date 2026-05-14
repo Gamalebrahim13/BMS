@@ -1,31 +1,31 @@
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-
 import { toast } from "react-toastify";
 import { changePassword } from "../../../../api/module/auth";
 import Input from "../../../Shared/Components/custominput";
+import type  { ChangePasswordData } from "../../../../api/module/auth";
 
 export default function ChangePass() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  type ChangePasswordForm = {
-    oldPassword: string;
-    newPassword: string;
-    confirmNewPassword: string;
-  };
+  // type ChangePasswordForm = {
+  //   oldPassword: string;
+  //   newPassword: string;
+  //   confirmNewPassword: string;
+  // };
 
   let {
     register,
     formState: { errors },
     handleSubmit,
     watch,
-  } = useForm<ChangePasswordForm>();
+  } = useForm<ChangePasswordData>();
   const newPassword = watch("newPassword");
 
-  const onSubmit = async (data: ChangePasswordForm) => {
+  const onSubmit = async (data: ChangePasswordData) => {
     if (loading) return;
 
     setLoading(true);
