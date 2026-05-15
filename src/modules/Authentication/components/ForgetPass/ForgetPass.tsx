@@ -22,11 +22,14 @@ export default function ForgetPass() {
 
     toast.success(res?.message || "Check your email");
 
+
     navigate("/reset-password", { state: { email: data.email } });
   } catch (error: any) {
     toast.error(error?.response?.data?.message || "Something went wrong");
   }
 };
+
+
   return (
     <>
       <div className="text-white mb-10">
