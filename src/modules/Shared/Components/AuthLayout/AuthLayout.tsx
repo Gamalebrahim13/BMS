@@ -1,23 +1,24 @@
 import { Outlet, useLocation } from "react-router-dom";
-import bgAuth from "../../../../assets/images/bgAuth.png";
 import logo from "../../../../assets/images/logo.png";
-import loginBg from "../../../../assets/images/login-bg.jpeg"
-import forgetBg from "../../../../assets/images/forget-pass-bg.jpeg"
-import restBg from "../../../../assets/images/rest-password-bg.jpeg"
-import changBg from "../../../../assets/images/change-password-bg.jpeg"
+import loginBg from "../../../../assets/images/login-bg.jpeg";
+import forgetBg from "../../../../assets/images/forget-pass-bg.jpeg";
+import resetBg from "../../../../assets/images/rest-password-bg.jpeg";
+import changeBg from "../../../../assets/images/change-password-bg.jpeg";
 
 export default function AuthLayout() {
-   const location = useLocation();
-     const backgrounds: Record<string, string> = {
+  const location = useLocation();
+
+  const backgrounds: Record<string, string> = {
     "/login": loginBg,
-    "/register": restBg,
-    "/verify-account": changBg,
-    "/change-password": changBg,
+    "/register": loginBg,
+    "/verify-account": changeBg,
+    "/change-password": changeBg,
     "/forget-password": forgetBg,
-    "/reset-password": restBg,
+    "/reset-password": resetBg,
   };
-   const currentBg =
-    backgrounds[location.pathname] || loginBg;
+
+  const currentBg = backgrounds[location.pathname] || loginBg;
+
   return (
     <div
       className="min-h-screen bg-cover bg-center flex items-center justify-center px-4"
@@ -26,7 +27,6 @@ export default function AuthLayout() {
       }}
     >
       <div className="w-full max-w-md">
-        
         {/* LOGO */}
         <div className="flex justify-center mb-6">
           <img src={logo} alt="logo" className="w-60" />
