@@ -33,7 +33,7 @@ export default function AuthLayout() {
         </div>
 
         {/* CARD */}
-        <div className="bg-[#315951cc] backdrop-blur-sm rounded-2xl p-12 shadow-2xl border border-white/10">
+        <div className="bg-[#315951cc] backdrop-blur-sm rounded-2xl p-9 shadow-2xl border border-white/10">
           <Outlet />
         </div>
       </div>
