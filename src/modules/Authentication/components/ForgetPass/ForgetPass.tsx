@@ -1,4 +1,4 @@
-import axios from "axios";
+import { requestResetPassword } from "../../../../api/module/auth";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -12,20 +12,21 @@ export default function ForgetPass() {
 
   const {
     register,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     handleSubmit,
   } = useForm<ForgetPassFormData>();
 
-  const onSubmit = async (data: ForgetPassFormData) => {
-    try {
-      console.log(data);
+ const onSubmit = async (data: ForgetPassFormData) => {
+  try {
+    const res = await requestResetPassword(data);
 
-      toast.success("Check your email");
-      navigate("/reset-password");
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
-    }
-  };
+    toast.success(res?.message || "Check your email");
+
+    navigate("/reset-password", { state: { email: data.email } });
+  } catch (error: any) {
+    toast.error(error?.response?.data?.message || "Something went wrong");
+  }
+};
 
   return (
     <>
@@ -58,21 +59,22 @@ export default function ForgetPass() {
             type="email"
             className="bg-transparent font-light outline-none text-white placeholder:text-white placeholder:text-md w-full"
           />
+
+          {errors.email?.message && (
+            <span className="text-primary text-sm mt-1">
+              {errors.email.message}
+            </span>
+          )}
         </div>
 
         <hr className="border-white/20" />
 
-        {errors.email?.message && (
-          <span className="text-primary">
-            {String(errors.email.message)}
-          </span>
-        )}
-
         <button
           type="submit"
+          disabled={isSubmitting}
           className="bg-primary text-white w-full px-8 py-2 mt-12 rounded-full"
         >
-          Verify
+          {isSubmitting ? "Sending..." : "Verify"}
         </button>
       </form>
     </>
