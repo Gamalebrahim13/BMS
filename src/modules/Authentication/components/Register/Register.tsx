@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { registerUser, type RegisterData } from "../../../../api/module/auth";
 import { FaUser } from "react-icons/fa";
-import Input from "../../../Shared/Components/custominput";
+import Input from "../../../Shared/Components/CustomeInput/custominput";
 
 
 export default function Register() {

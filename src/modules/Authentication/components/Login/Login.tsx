@@ -6,7 +6,7 @@ import { login } from "../../../../api/module/auth";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../../context/AuthContext";
 import type { LoginData } from "../../../../api/module/auth";
-import Input from "../../../Shared/Components/custominput";
+import Input from "../../../Shared/Components/CustomeInput/custominput";
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const context = useContext(AuthContext);
@@ -33,7 +33,7 @@ export default function Login() {
       const response = await login(data);
       console.log(response);
       saveLoginData(response.token);
-      navigate("/register");
+      navigate("/dashboard");
       toast.success("Login Successfully");
     } catch (error: any) {
       const errors = error?.response?.data?.additionalInfo?.errors;

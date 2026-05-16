@@ -12,6 +12,15 @@ import ChangePass from "./modules/Authentication/components/ChangePass/ChangePas
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ProtectedRoute from "./modules/Shared/Components/ProtectedRoute/ProtectedRoute";
+import MasterLayout from "./modules/Shared/Components/MasterLayout/MasterLayout";
+import Dashboard from "./modules/Dashboard/component/Dashboard/Dashboard";
+import ProjectData from "./modules/Projects/components/ProjectData/ProjectData";
+import ProjectList from "./modules/Projects/components/ProjectList/ProjectList";
+import TaskData from "./modules/Tasks/component/TaskData/TaskData";
+import TaskList from "./modules/Tasks/component/TaskList/TaskList";
+import UserList from "./modules/Users/component/UserList/UserList";
+import TaskBoard from "./modules/Taskboard/component/TaskBoard/TaskBoard";
 
 function App() {
   const routes = createBrowserRouter([
@@ -29,6 +38,24 @@ function App() {
         { path: "change-password", element: <ChangePass /> },
       ],
     },
+    {
+      path:"dashboard",
+      element:<ProtectedRoute>
+        <MasterLayout/>
+      </ProtectedRoute>,
+      errorElement:<NotFound/>,
+      children:[
+        {index:true ,element:<Dashboard/>},
+        {path:"project-data",element:<ProjectData/>},
+        {path:"project-list",element:<ProjectList/>},
+        {path:"task-data",element:<TaskData/>},
+        {path:"task-list",element:<TaskList/>},
+        {path:"user-list",element:<UserList/>},
+        {path:"task-board",element:<TaskBoard/>},
+
+
+      ]
+    }
   ]);
 
   return (

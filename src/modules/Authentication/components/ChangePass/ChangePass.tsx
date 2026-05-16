@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { changePassword } from "../../../../api/module/auth";
-import Input from "../../../Shared/Components/custominput";
+import Input from "../../../Shared/Components/CustomeInput/custominput";
 import type { ChangePasswordData } from "../../../../api/module/auth";
 
 export default function ChangePass() {
