@@ -30,9 +30,14 @@ export default function AuthContextProvider(props: { children: ReactNode }) {
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
     if (savedToken) {
-      saveLoginData(savedToken);
+      try {
+        const decodedToken: DecodedToken = jwtDecode(savedToken);
+        setLoginData(decodedToken); 
+      } catch (e) {
+        localStorage.removeItem('token'); 
+      }
     }
-  }, []);
+  }, []); 
 
   return (
     <AuthContext.Provider value={{ loginData, saveLoginData }}>

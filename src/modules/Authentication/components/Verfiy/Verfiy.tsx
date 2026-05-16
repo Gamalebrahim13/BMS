@@ -3,7 +3,7 @@ import { verifyAccount, type VerifyData } from "../../../../api/module/auth";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import Input from "../../../Shared/Components/custominput";
+import Input from "../../../Shared/Components/CustomeInput/custominput";
 
 
 export default function Verfiy() {

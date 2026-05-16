@@ -24,11 +24,8 @@ export default function Login() {
     handleSubmit,
   } = useForm<LoginData>();
 
-  const onSubmit = async (data: LoginData) => {
-    if (loading) return;
-
+  const onSubmit = async (data: LoginData,) => {
     setLoading(true);
-
     try {
       const response = await login(data);
       console.log(response);
@@ -92,6 +89,7 @@ export default function Login() {
         </div>
 
         <button
+          type="submit"
           disabled={loading}
           className="bg-primary text-white w-full px-8 py-2 mt-10 rounded-full">
           {loading ? "Loading..." : "Login"}
