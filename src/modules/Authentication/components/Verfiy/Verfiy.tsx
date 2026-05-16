@@ -32,7 +32,8 @@ export default function Verfiy() {
       }
     };
   return (
-    <>
+    
+    <div className="w-full max-w-md mx-auto bg-[#315951cc] backdrop-blur-sm rounded-2xl p-6 md:p-10 shadow-2xl border border-white/10">
      <div className="text-white mb-10">
         <span className="text-sm font-light  text-white">welcome to PMS</span>
         <h3 className="text-3xl text-primary relative font-bold mt-1">
@@ -81,7 +82,8 @@ export default function Verfiy() {
           {loading ? "Loading..." : "Save"}
         </button>
         </form>
-    </>
+        </div>
+    
   )
 }
 

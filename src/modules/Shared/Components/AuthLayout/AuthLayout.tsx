@@ -26,14 +26,14 @@ export default function AuthLayout() {
         backgroundImage: `url(${currentBg})`,
       }}
     >
-      <div className="w-full max-w-md">
+      <div className="w-full ">
         {/* LOGO */}
         <div className="flex justify-center mb-6">
           <img src={logo} alt="logo" className="w-60" />
         </div>
 
         {/* CARD */}
-        <div className="bg-[#315951cc] backdrop-blur-sm rounded-2xl p-9 shadow-2xl border border-white/10">
+        <div className="w-full">
           <Outlet />
         </div>
       </div>

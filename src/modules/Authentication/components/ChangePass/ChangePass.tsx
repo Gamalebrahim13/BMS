@@ -26,7 +26,7 @@ export default function ChangePass() {
     setLoading(true);
 
     try {
-      await changePassword(data); // ✅ لازم تتستخدم
+      await changePassword(data); 
 
       toast.success("Change Password Successfully");
 
@@ -53,7 +53,7 @@ export default function ChangePass() {
   };
 
   return (
-    <>
+    <div className="w-full max-w-md mx-auto bg-[#315951cc] backdrop-blur-sm rounded-2xl p-6 md:p-10 shadow-2xl border border-white/10">
       <div className="text-white mb-10">
         <span className="text-sm font-light text-white">
           welcome to PMS
@@ -109,6 +109,6 @@ export default function ChangePass() {
           {loading ? "Loading..." : "Save"}
         </button>
       </form>
-    </>
+    </div>
   );
 }

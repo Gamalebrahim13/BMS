@@ -56,6 +56,10 @@ export default function Input({
             placeholder:text-white/70
             font-light
             pr-10
+            [&::-webkit-credentials-auto-fill-button]:hidden
+    [&::-webkit-contacts-auto-fill-button]:hidden
+    [&::-ms-reveal]:hidden
+    [&::-ms-clear]:hidden
             ${className}
           `}
         />
