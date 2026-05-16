@@ -1,7 +1,8 @@
-import { requestResetPassword } from "../../../../api/module/auth";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import Input from "../../../Shared/Components/CustomeInput/custominput";
 
 type ForgetPassFormData = {
   email: string;
@@ -12,26 +13,29 @@ export default function ForgetPass() {
 
   const {
     register,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     handleSubmit,
   } = useForm<ForgetPassFormData>();
 
  const onSubmit = async (data: ForgetPassFormData) => {
   try {
-    const res = await requestResetPassword(data);
+    const res = await axios.post(
+      "https://upskilling-egypt.com:3003/api/v1/Users/Reset/Request",
+      data
+    );
 
-    toast.success(res?.message || "Check your email");
+    toast.success(res?.data?.message || "Check your email");
 
+    
+    localStorage.setItem("resetEmail", data.email);
 
-    navigate("/reset-password", { state: { email: data.email } });
+    navigate("/reset-password");
   } catch (error: any) {
     toast.error(error?.response?.data?.message || "Something went wrong");
   }
 };
-
-
   return (
-    <>
+    <div className="w-full max-w-md mx-auto bg-[#315951cc] backdrop-blur-sm rounded-2xl p-6 md:p-10 shadow-2xl border border-white/10">
       <div className="text-white mb-10">
         <span className="text-[11px] font-light text-white">
           welcome to PMS
@@ -45,40 +49,30 @@ export default function ForgetPass() {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col mb-2">
-          <label className="text-primary text-sm font-light mb-0.5">
-            E-mail
-          </label>
+          <Input
+          label="Email"
+          type="email"
+          required
+          placeholder="Enter email"
+          register={register("email", {
+            required: "Email is required",
+          })}
+          error={errors.email}
+        />
 
-          <input
-            placeholder="Enter your E-mail"
-            {...register("email", {
-              required: "field is required",
-              pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                message: "Email is not valid",
-              },
-            })}
-            type="email"
-            className="bg-transparent font-light outline-none text-white placeholder:text-white placeholder:text-md w-full"
-          />
 
-          {errors.email?.message && (
-            <span className="text-primary text-sm mt-1">
-              {errors.email.message}
-            </span>
-          )}
+          
         </div>
 
-        <hr className="border-white/20" />
+       
 
         <button
           type="submit"
-          disabled={isSubmitting}
           className="bg-primary text-white w-full px-8 py-2 mt-12 rounded-full"
         >
-          {isSubmitting ? "Sending..." : "Verify"}
+          Verify
         </button>
       </form>
-    </>
+    </div>
   );
 }
