@@ -32,9 +32,17 @@ export default function TaskList() {
     title: string;
     description: string;
     status: string;
-    employeeId: number;
-    projectId: number;
+    creationDate: string;
+    employee?: {
+      id: number;
+      userName: string;
+    };
+    project?: {
+      id: number;
+      title: string;
+    };
   };
+
   type TasksResponse = {
     pageNumber: number;
     pageSize: number;
@@ -66,7 +74,7 @@ export default function TaskList() {
         onButtonClick={() => navigate("/dashboard/task-data")}
       />
 
-      <div className="overflow-x-auto shadow-md mx-10  bg-white">
+      <div className="overflow-x-auto shadow-md mx-10 rounded-lg bg-white">
         <div className="m-4 relative w-64">
           <input
             placeholder="Search By Fleets"
@@ -79,45 +87,45 @@ export default function TaskList() {
           />
         </div>
         <Table className="border-collapse rounded-0      ">
-          <TableHead className="bg-[#315951E5] text-white ">
-            <TableHeadCell className="border-r border-black/20  ">
-              <div className="flex items-center gap-2 cursor-pointer px-3 py-1 ">
-                Title
-                <MdOutlineUnfoldMore size={20} />
-              </div>
-            </TableHeadCell>
+          <TableHead className="bg-[#315951E5] text-white">
+            <TableRow>
+              <TableHeadCell className="border-r border-black/20">
+                <div className="flex items-center gap-2 cursor-pointer">
+                  Title
+                  <MdOutlineUnfoldMore size={20} />
+                </div>
+              </TableHeadCell>
 
-            <TableHeadCell className="border-r border-black/20 ">
-              <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
-                Status
-                <MdOutlineUnfoldMore size={20} />
-              </div>
-            </TableHeadCell>
+              <TableHeadCell className="border-r border-black/20">
+                <div className="flex items-center gap-2 cursor-pointer text-md">
+                  Status
+                  <MdOutlineUnfoldMore size={20} />
+                </div>
+              </TableHeadCell>
 
-            <TableHeadCell className="border-r border-black/20 ">
-              <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
-                Users
-                <MdOutlineUnfoldMore size={20} />
-              </div>
-            </TableHeadCell>
+              <TableHeadCell className="border-r border-black/20">
+                <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
+                  User
+                  <MdOutlineUnfoldMore size={20} />
+                </div>
+              </TableHeadCell>
 
-            <TableHeadCell className="border-r border-black/20 ">
-              <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
-                Projects
-                <MdOutlineUnfoldMore size={20} />
-              </div>
-            </TableHeadCell>
+              <TableHeadCell className="border-r border-black/20">
+                <div className="flex items-center gap-2 cursor-pointer">
+                  Project
+                  <MdOutlineUnfoldMore size={20} />
+                </div>
+              </TableHeadCell>
 
-            <TableHeadCell className="border-r  border-black/20  px-3 py-1">
-              <div className="flex items-center gap-2 cursor-pointer">
-                Date Created
-                <MdOutlineUnfoldMore size={20} />
-              </div>
-            </TableHeadCell>
+              <TableHeadCell className="border-r border-black/20">
+                <div className="flex items-center gap-2 cursor-pointer">
+                  Created Date
+                  <MdOutlineUnfoldMore size={20} />
+                </div>
+              </TableHeadCell>
 
-            <TableHeadCell>
-              <span className="sr-only">Edit</span>
-            </TableHeadCell>
+              <TableHeadCell></TableHeadCell>
+            </TableRow>
           </TableHead>
           <TableBody className="divide-y-0">
             {tasksList?.data?.map((task) => (
@@ -128,44 +136,84 @@ export default function TaskList() {
                   {task.title}
                 </TableCell>
 
-                <TableCell className="text-black border-none">
+                <TableCell className="text-black border-none text-lg">
                   {task.status}
                 </TableCell>
 
-                <TableCell className="text-black border-none">
-                  {task.employeeId}
+                <TableCell className="text-black  border-none text-lg">
+                  {task.employee?.userName || "No User"}
                 </TableCell>
 
-                <TableCell className="text-black border-none">
-                  {task.projectId}
+                <TableCell className="text-black border-none text-lg">
+                  {task.project?.title || "No Project"}
                 </TableCell>
 
-                <TableCell className="text-black border-none">-</TableCell>
+                <TableCell className="text-black border-none text-lg">
+                  {new Date(task.creationDate).toLocaleDateString("en-GB")}
+                </TableCell>
 
-                <TableCell className="relative border-none">
+                <TableCell className="relative border-none text-lg">
                   <div className="flex justify-center">
                     <button
                       onClick={() => toggleMenu(task.id)} //
                       className="text-[#315951E5] hover:bg-gray-100 p-1 rounded-full transition-colors">
                       <BsThreeDotsVertical size={25} />
                     </button>
-
                     {openMenuId === task.id && (
                       <>
+                        {/* overlay */}
                         <div
-                          className="fixed inset-0 z-10"
+                          className="fixed inset-0 z-[60] bg-transparent"
                           onClick={() => setOpenMenuId(null)}></div>
 
-                        <div className="absolute right-0 mt-8 w-32 bg-white border border-gray-200 shadow-lg rounded-md z-20 py-2">
-                          <button className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            <HiOutlineEye className="text-blue-500" />
-                          </button>
-                          <button className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            <HiOutlinePencilAlt className="text-green-500" />
-                          </button>
-                          <button className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                            <HiOutlineTrash />
-                          </button>
+                        {/* dropdown */}
+                        <div className="fixed right-20 bottom-26 w-40 bg-white mt-10 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-2xl z-[9999] p-2">
+                          <div className="flex flex-col gap-1.5">
+                            {/* View */}
+                            <button
+                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-green-50 transition-all group"
+                              onClick={() => setOpenMenuId(null)}>
+                              <div className="p-1.5 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
+                                <HiOutlineEye
+                                  size={18}
+                                  className="text-green-600"
+                                />
+                              </div>
+                              <span className="text-sm font-semibold text-gray-700 group-hover:text-green-600">
+                                View
+                              </span>
+                            </button>
+
+                            {/* Edit */}
+                            <button
+                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-yellow-50 transition-all group"
+                              onClick={() => setOpenMenuId(null)}>
+                              <div className="p-1.5 bg-yellow-50 rounded-lg group-hover:bg-yellow-100 transition-colors">
+                                <HiOutlinePencilAlt
+                                  size={18}
+                                  className="text-yellow-500"
+                                />
+                              </div>
+                              <span className="text-sm font-semibold text-gray-700 group-hover:text-yellow-600">
+                                Edit
+                              </span>
+                            </button>
+
+                            {/* Delete */}
+                            <button
+                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 transition-all group"
+                              onClick={() => setOpenMenuId(null)}>
+                              <div className="p-1.5 bg-red-50 rounded-lg group-hover:bg-red-100 transition-colors">
+                                <HiOutlineTrash
+                                  size={18}
+                                  className="text-red-600"
+                                />
+                              </div>
+                              <span className="text-sm font-semibold text-gray-700 group-hover:text-red-600">
+                                Delete
+                              </span>
+                            </button>
+                          </div>
                         </div>
                       </>
                     )}

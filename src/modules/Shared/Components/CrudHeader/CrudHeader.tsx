@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
+import { MdKeyboardArrowLeft } from "react-icons/md";
 
 type HeaderProps = {
   title: string;
@@ -18,14 +19,14 @@ export default function CrudHeader({
   linkPath,
 }: HeaderProps) {
   return (
-    <div className="flex items-center justify-between mb-8 px-10 py-5 ">
+    <div className="flex items-center justify-between mb-8 border-t border-black/10 px-10 py-5 bg-white ">
       {/* Left Side */}
       <div>
         {linkText && linkPath && (
           <Link
             to={linkPath}
-            className="text-sm text-gray-400 hover:text-primary transition ">
-            {linkText}
+            className="text-sm text-[#0E382F] hover:text-primary mb-1 transition flex items-center justify-content-center gap-2 ">
+            <MdKeyboardArrowLeft  size={18}/> {linkText}
           </Link>
         )}
 
