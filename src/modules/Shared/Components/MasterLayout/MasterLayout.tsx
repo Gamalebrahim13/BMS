@@ -11,7 +11,7 @@ export default function MasterLayout() {
       <SidBar />
     </div>
     
-    <div className="flex-1 overflow-auto">
+    <div className="flex-1 overflow-auto bg-[#F5F5F5]">
       <Outlet />
     </div>
   </div>
