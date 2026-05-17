@@ -4,15 +4,14 @@ import SidBar from "../SideBar/SidBar";
 
 export default function MasterLayout() {
   return (
-     <div className='d-flex vh-100 overflow-hidden'>
-        <div className='sidebar-wrapper'>
-          <SidBar/>
-      </div>
-      <div className="w-100 overflow-auto">
-        <Navbar />
-        <Outlet/>
-      </div>
-
-    </div>
+   <div className="flex h-screen overflow-hidden">
+  <div className="sidebar-wrapper">
+    <SidBar />
+  </div>
+  <div className="w-full overflow-auto">
+    <Navbar />
+    <Outlet />
+  </div>
+</div>
   )
 }

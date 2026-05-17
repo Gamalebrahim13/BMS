@@ -25,7 +25,6 @@ export default function ResetPass() {
     formState: { errors },
   } = useForm<ResetPassFormData>();
 
-  const passwordValue = watch("password");
 
   const onSubmit = async (data: ResetPassFormData) => {
     try {
@@ -94,6 +93,11 @@ export default function ResetPass() {
             placeholder="Confirm New password"
             register={register("confirmPassword", {
               required: "Password is required",
+              validate: (val) => {
+                if (watch('password') !== val) {
+                  return "Your passwords do not match";
+                }
+              }
             })}
             error={errors.confirmPassword}
           />
