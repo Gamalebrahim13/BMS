@@ -34,9 +34,10 @@ import {
   GetAllTasks,
   GetTaskById,
 } from "../../../../api/module/task";
-
 import { MdOutlineUnfoldMore } from "react-icons/md";
 import { toast } from "react-toastify";
+import type { Task } from "../../../../api/module/task";
+import type { TasksResponse } from "../../../../api/module/task";
 
 export default function TaskList() {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
@@ -45,28 +46,6 @@ export default function TaskList() {
   };
 
   const [openModal, setOpenModal] = useState(false);
-  type Task = {
-    id: number;
-    title: string;
-    description: string;
-    status: string;
-    creationDate: string;
-    employee?: {
-      id: number;
-      userName: string;
-    };
-    project?: {
-      id: number;
-      title: string;
-    };
-  };
-  type TasksResponse = {
-    pageNumber: number;
-    pageSize: number;
-    data: Task[];
-    totalNumberOfRecords: number;
-    totalNumberOfPages: number;
-  };
 
   // Get Task
   const [tasksList, setTasksList] = useState<TasksResponse | null>(null);
@@ -74,10 +53,21 @@ export default function TaskList() {
   const getTasksList = async () => {
     try {
       const response = await GetAllTasks();
-      console.log(response);
       setTasksList(response);
-    } catch (error) {
-      toast.error("Unable to fetch data from API");
+    } catch (error: any) {
+      const errors = error?.response?.data?.additionalInfo?.errors;
+
+      if (errors) {
+        Object.values(errors).forEach((messages: any) => {
+          if (Array.isArray(messages)) {
+            messages.forEach((msg: string) => {
+              toast.error(msg);
+            });
+          }
+        });
+      } else {
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      }
     }
   };
 
@@ -179,7 +169,6 @@ export default function TaskList() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative">
             <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-gray-100 -translate-x-1/2"></div>
 
-            {/* الجانب الأيسر: Task Info */}
             <div className="space-y-5">
               <h3 className="text-[#315951] font-bold text-lg mb-4">
                 Task Info
@@ -232,7 +221,6 @@ export default function TaskList() {
               </div>
             </div>
 
-            {/* الجانب الأيمن: Employee Info */}
             <div className="space-y-5">
               <h3 className="text-[#315951] font-bold text-lg mb-4">
                 Employee Info
@@ -439,7 +427,10 @@ export default function TaskList() {
                             {/* Edit */}
                             <button
                               className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-yellow-50 transition-all group text-white"
-                              onClick={() => setOpenMenuId(null)}>
+                              onClick={() => {
+                                setOpenMenuId(null);
+                                navigate(`/dashboard/edit-task/${task.id}`);
+                              }}>
                               <div className="p-1 bg-yellow-50 rounded-md group-hover:bg-yellow-100 transition-colors">
                                 <HiOutlinePencilAlt
                                   size={14}

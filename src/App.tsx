@@ -50,6 +50,7 @@ function App() {
         {path:"project-data/:id",element:<ProjectData/>},
         {path:"project-list",element:<ProjectList/>},
         {path:"task-data",element:<TaskData/>},
+        {path:"edit-task/:id",element:<TaskData/>},
         {path:"task-list",element:<TaskList/>},
         {path:"user-list",element:<UserList/>},
         {path:"task-board",element:<TaskBoard/>},
