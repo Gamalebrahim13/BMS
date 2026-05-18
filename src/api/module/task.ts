@@ -42,7 +42,7 @@ export const GetAllTasks = async () => {
 
 // Get Task By ID
 export const GetTaskById = async (id: string) => {
-  const response = await axiosClient.get(`/Task/manager/${id}`);
+  const response = await axiosClient.get(`/Task/${id}`);
   return response.data;
 };
 
@@ -52,7 +52,7 @@ export const UpdateTaskById = async (
   data: UpdateTaskDTO
 ) => {
   const response = await axiosClient.put(
-    `/Task/manager/${id}`,
+    `/Task/${id}`,
     data
   );
 
@@ -62,7 +62,7 @@ export const UpdateTaskById = async (
 // Delete Task
 export const DeleteTaskById = async (id: string) => {
   const response = await axiosClient.delete(
-    `/Task/manager/${id}`
+    `/Task/${id}`
   );
 
   return response.data;
