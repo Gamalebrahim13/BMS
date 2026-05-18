@@ -1,117 +1,55 @@
-import {
-  createContext,
-  useEffect,
-  useState,
-
-} from "react";
- import type { ReactNode} from "react";
+import { createContext, useEffect, useState, useContext, type ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
 
-// =========================
-// Decoded Token Type
-// =========================
 
 interface DecodedToken {
   userName?: string;
-  email?: string;
+  userEmail?: string;
   role?: string;
   id?: string;
   exp?: number;
 }
-
-// =========================
-// Context Type
-// =========================
-
 interface AuthContextType {
-  userData: DecodedToken | null;
-  userToken: string | null;
-  saveLoginData: (token: string) => void;
-  logout: () => void;
-  isAuthenticated: boolean;
+  loginData: DecodedToken | null;
+  saveLoginData: (token: string) => void; 
 }
 
-// =========================
-// Create Context
-// =========================
+export const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthContext = createContext<AuthContextType | null>(
-  null
-);
-
-// =========================
-// Provider
-// =========================
-
-export default function AuthProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  // =========================
-  // States
-  // =========================
-
-  const [userData, setUserData] =
-    useState<DecodedToken | null>(null);
-
-  const [userToken, setUserToken] =
-    useState<string | null>(null);
-
-  // =========================
-  // Save Login Data
-  // =========================
+export default function AuthContextProvider(props: { children: ReactNode }) {
+  const [loginData, setLoginData] = useState<DecodedToken | null>(null);
 
   const saveLoginData = (token: string) => {
-    // Save token
-    localStorage.setItem("token", token);
-
-    // Decode token
-    const decoded: DecodedToken = jwtDecode(token);
-
-    // Save states
-    setUserData(decoded);
-    setUserToken(token);
+    if (token) {
+      localStorage.setItem('token', token);
+      const decodedToken: DecodedToken = jwtDecode(token);
+      setLoginData(decodedToken);
+    }
   };
-
-  // =========================
-  // Logout
-  // =========================
-
-  const logout = () => {
-    localStorage.removeItem("token");
-
-    setUserData(null);
-    setUserToken(null);
-  };
-
-  // =========================
-  // Load User On App Start
-  // =========================
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      saveLoginData(token);
+    const savedToken = localStorage.getItem('token');
+    if (savedToken) {
+      try {
+        const decodedToken: DecodedToken = jwtDecode(savedToken);
+        setLoginData(decodedToken); 
+      } catch (e) {
+        localStorage.removeItem('token'); 
+      }
     }
-  }, []);
-
-  // =========================
-  // Provider Return
-  // =========================
+  }, []); 
 
   return (
-    <AuthContext.Provider
-      value={{
-        userData,
-        userToken,
-        saveLoginData,
-        logout,
-        isAuthenticated: !!userToken,
-      }}
-    >
-      {children}
+    <AuthContext.Provider value={{ loginData, saveLoginData }}>
+      {props.children}
     </AuthContext.Provider>
   );
 }
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthContextProvider");
+  }
+  return context;
+};
