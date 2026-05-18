@@ -37,6 +37,15 @@ export type userResponse = {
   totalNumberOfRecords: number;
   totalNumberOfPages: number;
 };
+export interface UserCountResponse {
+  activatedEmployeeCount: number;
+  deactivatedEmployeeCount: number;
+}
+
+export const GetUsersCount = async (): Promise<UserCountResponse> => {
+  const response = await axiosClient.get("/Users/count");
+  return response.data;
+};
 export const GetAllUsersByMangers = async () => {
   const response = await axiosClient.get("/Users/Manager");
   return response.data;

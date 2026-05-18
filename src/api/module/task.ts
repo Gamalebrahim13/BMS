@@ -3,7 +3,21 @@ import axiosClient from "../axiosClient";
 /* =========================
    Types
 ========================= */
+export interface TaskCountResponse {
+  toDo: number;
+  inProgress: number;
+  done: number;
+}
 
+export interface ProjectsResponse {
+  data: any[]; 
+  totalNumberOfRecords: number;
+}
+
+export const GetTasksCount = async (): Promise<TaskCountResponse> => {
+  const response = await axiosClient.get("/Task/count");
+  return response.data;
+};
 export type Task = {
   id: string;
   title: string;
