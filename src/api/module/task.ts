@@ -18,14 +18,28 @@ export const GetTasksCount = async (): Promise<TaskCountResponse> => {
   const response = await axiosClient.get("/Task/count");
   return response.data;
 };
-export type Task = {
-  id: string;
-  title: string;
-  status: string;
-  userCount?: number;
-  taskCount?: number;
-  createdAt?: string;
-};
+  export type Task = {
+    id: number;
+    title: string;
+    description: string;
+    status: string;
+    creationDate: string;
+    employee?: {
+      id: number;
+      userName: string;
+    };
+    project?: {
+      id: number;
+      title: string;
+    };
+  };
+  export type TasksResponse = {
+    pageNumber: number;
+    pageSize: number;
+    data: Task[];
+    totalNumberOfRecords: number;
+    totalNumberOfPages: number;
+  };
 
 export type CreateTaskDTO = {
   title: string;
