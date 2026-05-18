@@ -2,13 +2,15 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/flowbite-react/**/*.js",
   ],
+
   theme: {
     extend: {
       colors: {
         // Main Brand Colors
         primary: "#ef9b28",
-        secondary: "#1F263E",
+        secondary: "#315951E5",
 
         // Status Colors
         success: "#198754",
@@ -28,5 +30,6 @@ export default {
       },
     },
   },
-  plugins: [],
-}
+
+  plugins: [require("flowbite/plugin")],
+};
