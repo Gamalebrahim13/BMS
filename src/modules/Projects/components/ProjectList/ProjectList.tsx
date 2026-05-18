@@ -4,6 +4,12 @@ import { IoSearchOutline } from "react-icons/io5";
 import { DeleteProject, GetProjects } from "../../../../api/module/project";
 import { getProjectStatus } from "../../../../api/utils/projectStatus";
 import { useNavigate } from "react-router-dom";
+import CrudHeader from "../../../Shared/Components/Header/Header";
+import  { Table, TableHead, TableHeadCell, TableBody, TableRow, TableCell } from "flowbite-react";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { FiSearch } from "react-icons/fi";
+import { HiOutlineEye, HiOutlinePencilAlt, HiOutlineTrash } from "react-icons/hi";
+import  { MdOutlineUnfoldMore } from "react-icons/md";
 export default function ProjectList() {
 
     const navigation = useNavigate();
@@ -16,7 +22,7 @@ export default function ProjectList() {
       pageSize: 10,
     });
 
-    console.log(response.data);
+   
 
     setProjects(response.data);
   } catch (error) {
@@ -52,120 +58,147 @@ const handleDelete = async (id: number) => {
 
 
   return (
-    <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-      {/* Search */}
-      <div className="p-4">
-        <div className="relative w-[250px]">
-          <IoSearchOutline className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400 text-lg" />
 
-          <input
-            type="text"
-            placeholder="Search By Title"
-            className="w-full border border-gray-300 rounded-full py-2 pl-10 pr-4 outline-none focus:border-[#315951]"
+      <>
+     <CrudHeader
+            title="Projects"
+            buttonText="Add New Project"
+            onButtonClick={() => navigation("/dashboard/project-data")}
           />
-        </div>
-      </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-[#315951] text-white">
-            <tr>
-              <th className="py-4 px-5 text-left font-medium">Title</th>
-              <th className="py-4 px-5 text-left font-medium">Status</th>
-              <th className="py-4 px-5 text-left font-medium">Num Users</th>
-              <th className="py-4 px-5 text-left font-medium">Num Tasks</th>
-              <th className="py-4 px-5 text-left font-medium">
-                Date Created
-              </th>
-              <th className="py-4 px-5"></th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {projects.map((project, index) => (
-              <tr
-                key={project.id}
-                className={`border-b ${
-                  index % 2 === 0 ? "bg-[#F9F9F9]" : "bg-white"
-                }`}
-              >
-                <td className="py-4 px-5 text-gray-700">
-                  {project.title}
-                </td>
-
-                <td className="py-4 px-5">
-                  <span className="bg-[#315951] text-white text-sm px-4 py-1 rounded-full">
-                    {getProjectStatus(project.task)}
-                  </span>
-                </td>
-
-                <td className="py-4 px-5 text-gray-600">
-                  {project.users}
-                </td>
-
-                <td className="py-4 px-5 text-gray-600">
-                 {project.task?.length || 0}
-                </td>
-
-                <td className="py-4 px-5 text-gray-600">
-                  {new Date(project.creationDate).toLocaleDateString()}
-                </td>
-
-                <td className="py-4 px-5 text-center relative">
-                                      <div className="relative flex justify-center">
-                    <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleMenu(project.id);
-                    }}
-                    className="text-[#315951] text-lg"
-                  >
-                    <FaEllipsisVertical />
-                  </button>
-
-                      {openMenuId === project.id && (
-                        <div className="absolute right-0 top-6 bg-white shadow-lg rounded-lg w-32 z-50 border">
-                          
-                          <button className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 w-full text-sm">
-                            👁 View
-                          </button>
-
-                          <button onClick={() => navigation("/dashboard/project-data")} className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 w-full text-sm">
-                            ✏️ Edit
-                          </button>
-
-                          <button onClick={() => handleDelete(project.id)} className="flex items-center gap-2 px-3 py-2 hover:bg-red-100 text-red-600 w-full text-sm">
-                            🗑 Delete
-                          </button>
-
-                        </div>
-                      )}
+             <div className="overflow-x-auto shadow-md mx-10  bg-white">
+                    <div className="m-4 relative w-64">
+                      <input
+                        placeholder="Search By Fleets"
+                        className="w-full bg-transparent rounded-full border border-[#26385A40] px-10 py-1 pr-10 outline-none placeholder:text-[#AAAAAA]"
+                      />
+            
+                      <FiSearch
+                        size={18}
+                        className="absolute left-3 top-1/2    -translate-y-1/2 text-gray-500"
+                      />
                     </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                    <Table className="border-collapse rounded-0      ">
+                      <TableHead className="bg-[#315951E5] text-white ">
+                        <TableHeadCell className="border-r border-black/20  ">
+                          <div className="flex items-center gap-2 cursor-pointer px-3 py-1 ">
+                            Title
+                            <MdOutlineUnfoldMore size={20} />
+                          </div>
+                        </TableHeadCell>
+            
+                        <TableHeadCell className="border-r border-black/20 ">
+                          <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
+                            Status
+                            <MdOutlineUnfoldMore size={20} />
+                          </div>
+                        </TableHeadCell>
+            
+                        <TableHeadCell className="border-r border-black/20 ">
+                          <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
+                           Num Users
+                            <MdOutlineUnfoldMore size={20} />
+                          </div>
+                        </TableHeadCell>
+            
+                        <TableHeadCell className="border-r border-black/20 ">
+                          <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
+                            Num tasks
+                            <MdOutlineUnfoldMore size={20} />
+                          </div>
+                        </TableHeadCell>
+            
+                        <TableHeadCell className="border-r  border-black/20  px-3 py-1">
+                          <div className="flex items-center gap-2 cursor-pointer">
+                            Date Created
+                            <MdOutlineUnfoldMore size={20} />
+                          </div>
+                        </TableHeadCell>
+            
+                        <TableHeadCell>
+                          <span className="sr-only">Edit</span>
+                        </TableHeadCell>
+                      </TableHead>
+                      <TableBody className="divide-y-0">
+                        {projects?.map((project) => ( 
 
-      {/* Footer */}
-      <div className="flex items-center justify-between p-5 text-sm text-gray-500">
-        <div>
-          Showing
-          <span className="mx-2 border px-3 py-1 rounded-full">10</span>
-          of 102 Results
-        </div>
 
-        <div className="flex items-center gap-5">
-          <span>Page 1 of 10</span>
-
-          <div className="flex items-center gap-3 text-xl">
-            <button>{`<`}</button>
-            <button>{`>`}</button>
-          </div>
-        </div>
-      </div>
-    </div>
+                          <TableRow
+                            key={project.id}
+                            className="odd:bg-white even:bg-[#F5F5F5] border-none">
+                            <TableCell className="whitespace-nowrap font-medium text-black border-none">
+                              {project.title}
+                            </TableCell>
+            
+                            <TableCell className="text-black border-none">
+                              {getProjectStatus(project.task)}
+                            </TableCell>
+            
+                            <TableCell className="text-black border-none">
+                             
+                            </TableCell>
+            
+                            <TableCell className="text-black border-none">
+                              {project.task?.length || 0}
+                            </TableCell>
+            
+                            <TableCell className="text-black border-none">
+                              {new Date(project.creationDate).toLocaleDateString()}
+                            </TableCell>
+            
+                            <TableCell className="relative border-none">
+                              <div className="flex justify-center">
+                               <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleMenu(project.id);
+                                }}
+                                className="text-[#315951E5] hover:bg-gray-100 p-1 rounded-full transition-colors"
+                              >
+                                <BsThreeDotsVertical size={25} />
+                              </button>
+            
+                                {openMenuId === project.id && (
+                                  <>
+                                    <div
+                                      className="fixed inset-0 z-10"
+                                      onClick={() => setOpenMenuId(null)}></div>
+            
+                                    <div className="absolute right-0 mt-8 w-32 bg-white border border-gray-200 shadow-lg rounded-md z-20 py-2">
+                                      <button className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <HiOutlineEye className="text-blue-500" />
+                                      </button>
+                                      <button 
+                                       onClick={() =>
+                                       {
+                                        
+                                        navigation(`/dashboard/project-data/${project.id}`)
+                                       }
+  
+}
+                                          className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <HiOutlinePencilAlt className="text-green-500" />
+                                      </button>
+                                      <button className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                        <HiOutlineTrash />
+                                      </button>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+     
+    </>
   );
 }
+
+
+
+
+
+
