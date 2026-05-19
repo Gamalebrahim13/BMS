@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
-import Input from "../../../Shared/Components/CustomeInput/custominput";
+import Input from "../../../Shared/Components/CustomInput/custominput";
 type ResetPassFormData = {
   email: string;
   seed: string;
