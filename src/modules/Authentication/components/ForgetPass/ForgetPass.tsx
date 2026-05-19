@@ -2,7 +2,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import Input from "../../../Shared/Components/CustomeInput/custominput";
+import Input from "../../../Shared/Components/CustomInput/custominput";
 
 type ForgetPassFormData = {
   email: string;
