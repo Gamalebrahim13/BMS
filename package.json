@@ -15,6 +15,7 @@
     "flowbite-react": "^0.12.17",
     "jwt-decode": "^4.0.0",
     "react": "^19.2.6",
+    "react-apexcharts": "^2.1.0",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.2.6",
     "react-hook-form": "^7.75.0",
