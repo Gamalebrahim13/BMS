@@ -20,6 +20,7 @@ import {
   Modal,
   ModalBody,
 } from "flowbite-react";
+import NoData from "../../../Shared/Components/NoData/NotData";
 
 import { BsThreeDotsVertical } from "react-icons/bs";
 
@@ -196,10 +197,22 @@ export default function ProjectList() {
         </ModalBody>
       </Modal>
 
+<<<<<<< Updated upstream
       {/* Table */}
       <div className="overflow-x-auto shadow-md mx-10 bg-white">
         <div className="flex items-center gap-2">
           <div className="m-4 relative w-64">
+=======
+      {/* Table & Filters */}
+      
+      <div className="overflow-x-auto shadow-md mx-10 bg-white rounded-lg mt-5">
+         {projects?.length > 0 ? (
+          <>
+        
+        <div className="flex items-center gap-2 p-4">
+          <div className="relative w-64">
+            
+>>>>>>> Stashed changes
             <input
               placeholder="Search Projects"
               className="w-full bg-transparent rounded-full border border-[#26385A40] px-10 py-2 pr-10 outline-none placeholder:text-[#AAAAAA]"
@@ -216,8 +229,14 @@ export default function ProjectList() {
             Filter
           </button>
         </div>
+<<<<<<< Updated upstream
 
         <Table>
+=======
+       
+      
+        <Table className="w-full text-left">
+>>>>>>> Stashed changes
           <TableHead className="bg-[#315951E5] text-white">
             <TableRow>
               <TableHeadCell>
@@ -361,7 +380,12 @@ export default function ProjectList() {
               </TableRow>
             ))}
           </TableBody>
+
         </Table>
+        </>
+         ) : (
+    <NoData />
+  )}
       </div>
     </>
   );

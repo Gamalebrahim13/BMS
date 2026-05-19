@@ -335,6 +335,8 @@ export default function TaskList() {
         </div>
 
         {/* Table */}
+
+        
         <Table className="border-collapse rounded-0      ">
           <TableHead className="bg-[#315951E5] text-white">
             <TableRow>
