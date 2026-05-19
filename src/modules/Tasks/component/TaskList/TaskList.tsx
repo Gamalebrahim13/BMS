@@ -328,16 +328,16 @@ export default function TaskList() {
             </button>
           </div>
 
-          {/* Table */}
-          <Table className="border-collapse rounded-0      ">
-            <TableHead className="bg-[#315951E5] text-white">
-              <TableRow>
-                <TableHeadCell className="border-r border-black/20">
-                  <div className="flex items-center gap-2 cursor-pointer">
-                    Title
-                    <MdOutlineUnfoldMore size={20} />
-                  </div>
-                </TableHeadCell>
+        {/* Table */}
+        <Table className="border-collapse rounded-0      ">
+          <TableHead className="bg-[#315951E5] text-white">
+            <TableRow>
+              <TableHeadCell className="border-r border-black/20">
+                <div className="flex items-center gap-2 cursor-pointer">
+                  Title
+                  <MdOutlineUnfoldMore size={20} />
+                </div>
+              </TableHeadCell>
 
                 <TableHeadCell className="border-r border-black/20">
                   <div className="flex items-center gap-2 cursor-pointer text-md">
