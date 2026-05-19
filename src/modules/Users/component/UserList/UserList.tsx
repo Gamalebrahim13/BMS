@@ -11,37 +11,37 @@ import { toast } from 'react-toastify';
 import { FaUser } from 'react-icons/fa';
 import { FaEarthAmericas } from 'react-icons/fa6';
 import NoData from '../../../Shared/Components/NoData/NotData';
+import Pagination from '../../../Shared/Components/Pagination/Pagination';
 
 export default function UserList() {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<user | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+const [pageSize, setPageSize] = useState(10);
 
   const toggleMenu = (id: number) => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
 const [usersList, setUsersList] = useState<userResponse | null>(null);
-    const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
 
- const getUsersList = async () => {
+ const getUsersList = async (page: number) => {
   try {
-    const response = await GetAllUsersByMangers();
-    console.log(response)
+    const response = await GetAllUsersByMangers(page, pageSize);;
     setUsersList(response); 
   } catch (error) {
-    toast.error("Unable to fetch data from API");
+    toast.error("Some Things went wronge ");
   }
 };
   const getUser = async (id: number) => {
     try {
       const response = await GetUserById(id.toString());
       const userData = response?.data ?? response;
-      console.log(userData);
       setSelectedUser(userData);
       setOpenViewModal(true);
     } catch (error) {
-      toast.error("Unable to fetch data from API");
+       toast.error("Some Things went wronge ");
     }
   };
   const handleToggleActivation = async (id: number) => {
@@ -49,14 +49,14 @@ const [usersList, setUsersList] = useState<userResponse | null>(null);
     await ToggleUserActivation(id);
     toast.success("User status updated successfully");
     setOpenMenuId(null); 
-    getUsersList();
+    getUsersList(currentPage);
   } catch (error) {
-    toast.error("Failed to update user status");
+     toast.error("Some Things went wronge ");
   }
 };
   useEffect(() => {
-    getUsersList();
-  }, []);
+    getUsersList(currentPage);
+  }, [currentPage, pageSize]);
   return (
     <>
       <CrudHeader
@@ -334,6 +334,19 @@ const [usersList, setUsersList] = useState<userResponse | null>(null);
         ))}
       </TableBody>
     </Table>
+    <Pagination 
+      currentPage={usersList?.pageNumber || 1}
+      totalRecords={usersList?.totalNumberOfRecords || 0}
+      pageSize={usersList?.pageSize || 10}
+      onPageChange={(page) => {
+
+        setCurrentPage(page);
+      }}
+      onPageSizeChange={(size) => {
+        setPageSize(size);
+        setCurrentPage(1);
+      }}
+    />
   </div>
 ) : (
   <NoData />
