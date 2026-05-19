@@ -38,8 +38,12 @@ import { MdOutlineUnfoldMore } from "react-icons/md";
 import { toast } from "react-toastify";
 import type { Task } from "../../../../api/module/task";
 import type { TasksResponse } from "../../../../api/module/task";
+import NoData from "../../../Shared/Components/NoData/NotData";
+import Pagination from "../../../Shared/Components/Pagination/Pagination";
 
 export default function TaskList() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const toggleMenu = (id: number) => {
     setOpenMenuId(openMenuId === id ? null : id);
@@ -50,9 +54,10 @@ export default function TaskList() {
   // Get Task
   const [tasksList, setTasksList] = useState<TasksResponse | null>(null);
   const navigate = useNavigate();
-  const getTasksList = async () => {
+  const getTasksList = async (page: number) => {
     try {
-      const response = await GetAllTasks();
+      const response = await GetAllTasks(page, pageSize);
+      console.log(response);
       setTasksList(response);
     } catch (error: any) {
       const errors = error?.response?.data?.additionalInfo?.errors;
@@ -77,7 +82,7 @@ export default function TaskList() {
     try {
       const response = await DeleteTaskById(selectedTaskId!.toString());
       setOpenModal(false);
-      getTasksList();
+      getTasksList(currentPage);
       toast.success("Task deleted successfully");
     } catch (error: any) {
       const errors = error?.response?.data?.additionalInfo?.errors;
@@ -112,8 +117,8 @@ export default function TaskList() {
   };
 
   useEffect(() => {
-    getTasksList();
-  }, []);
+    getTasksList(currentPage);
+  }, [currentPage, pageSize]);
   return (
     <>
       <CrudHeader
@@ -303,24 +308,25 @@ export default function TaskList() {
       </Modal>
 
       {/* Table Wrapper */}
-      <div className="overflow-x-auto shadow-md mx-10 rounded-lg bg-white">
-        <div className="flex items-center gap-2">
-          {/* Filteration */}
-          <div className="m-4 relative w-64">
-            <input
-              placeholder="Search By Fleets"
-              className="w-full bg-transparent rounded-full border border-[#26385A40] px-10 py-2  pr-10 outline-none placeholder:text-[#AAAAAA]"
-            />
+      {tasksList?.data && tasksList.data.length > 0 ? (
+        <div className="overflow-x-auto shadow-md mx-10 rounded-lg bg-white">
+          <div className="flex items-center gap-2">
+            {/* Filteration */}
+            <div className="m-4 relative w-64">
+              <input
+                placeholder="Search By Fleets"
+                className="w-full bg-transparent rounded-full border border-[#26385A40] px-10 py-2  pr-10 outline-none placeholder:text-[#AAAAAA]"
+              />
 
-            <FiSearch
-              size={18}
-              className="absolute left-3 top-1/2    -translate-y-1/2 text-gray-500"
-            />
+              <FiSearch
+                size={18}
+                className="absolute left-3 top-1/2    -translate-y-1/2 text-gray-500"
+              />
+            </div>
+            <button className="bg-transparent rounded-full px-6 py-2 border border-[#26385A40] flex items-center gap-3">
+              <IoFilterSharp size={18} /> Filter
+            </button>
           </div>
-          <button className="bg-transparent rounded-full px-6 py-2 border border-[#26385A40] flex items-center gap-3">
-            <IoFilterSharp size={18} /> Filter
-          </button>
-        </div>
 
         {/* Table */}
 
@@ -468,12 +474,162 @@ export default function TaskList() {
                       </>
                     )}
                   </div>
-                </TableCell>
+                </TableHeadCell>
+
+                <TableHeadCell className="border-r border-black/20">
+                  <div className="flex items-center gap-2 cursor-pointer">
+                    Project
+                    <MdOutlineUnfoldMore size={20} />
+                  </div>
+                </TableHeadCell>
+
+                <TableHeadCell className="border-r border-black/20">
+                  <div className="flex items-center gap-2 cursor-pointer">
+                    Created Date
+                    <MdOutlineUnfoldMore size={20} />
+                  </div>
+                </TableHeadCell>
+
+                <TableHeadCell></TableHeadCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHead>
+            <TableBody className="divide-y-0">
+              {tasksList?.data?.map((task) => (
+                <TableRow
+                  key={task.id}
+                  className="odd:bg-white even:bg-[#F5F5F5] border-none">
+                  <TableCell className="whitespace-nowrap font-medium text-black border-none">
+                    {task.title}
+                  </TableCell>
+
+                  <TableCell className="border-none text-lg">
+                    <span
+                      className="px-5 py-2 rounded-full text-white text-sm font-medium"
+                      style={{
+                        backgroundColor:
+                          task.status === "todo"
+                            ? "#E4E2F5"
+                            : task.status === "inprogress"
+                              ? "#EF9B28A3"
+                              : task.status === "done"
+                                ? "#009247"
+                                : "#E4E1F5",
+                        
+                      }}>
+                      {task.status}
+                    </span>
+                  </TableCell>
+
+                  <TableCell className="text-black  border-none text-lg">
+                    {task.employee?.userName || "No User"}
+                  </TableCell>
+
+                  <TableCell className="text-black border-none text-lg">
+                    {task.project?.title || "No Project"}
+                  </TableCell>
+
+                  <TableCell className="text-black border-none text-lg">
+                    {new Date(task.creationDate).toLocaleDateString("en-GB")}
+                  </TableCell>
+
+                  <TableCell className="relative border-none text-lg">
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => toggleMenu(task.id)} //
+                        className="text-[#315951E5] hover:bg-gray-100 p-1 rounded-full transition-colors">
+                        <BsThreeDotsVertical size={25} />
+                      </button>
+
+                      {openMenuId === task.id && (
+                        <>
+                          <div
+                            className="fixed inset-0 z-[60] bg-transparent"
+                            onClick={() => setOpenMenuId(null)}></div>
+
+                          <div className="fixed right-20 bottom-30 mt-10 w-32 bg-[#3159517c] shadow-[0_10px_30px_rgba(0,0,0,0.2)] rounded-xl z-[9999] p-1.5 ">
+                            <div className="flex flex-col gap-0.5">
+                              {/* View */}
+                              <button
+                                className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-green-50 transition-all group text-white"
+                                onClick={() => {
+                                  getTask(task.id);
+                                  setOpenViewModal(true);
+                                  setOpenMenuId(null);
+                                }}>
+                                <div className="p-1 bg-green-50 rounded-md group-hover:bg-green-100 transition-colors">
+                                  <HiOutlineEye
+                                    size={14}
+                                    className="text-green-600"
+                                  />
+                                </div>
+                                <span className="text-xs font-semibold text-gray-700 group-hover:text-green-600">
+                                  View
+                                </span>
+                              </button>
+
+                              {/* Edit */}
+                              <button
+                                className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-yellow-50 transition-all group text-white"
+                                onClick={() => {
+                                  setOpenMenuId(null);
+                                  navigate(`/dashboard/edit-task/${task.id}`);
+                                }}>
+                                <div className="p-1 bg-yellow-50 rounded-md group-hover:bg-yellow-100 transition-colors">
+                                  <HiOutlinePencilAlt
+                                    size={14}
+                                    className="text-yellow-500"
+                                  />
+                                </div>
+                                <span className="text-xs font-semibold text-gray-700 group-hover:text-yellow-600">
+                                  Edit
+                                </span>
+                              </button>
+
+                              {/* Delete */}
+                              <button
+                                className="flex items-center gap-2 text-white px-2 py-1.5 rounded-lg hover:bg-red-50 transition-all group"
+                                onClick={() => {
+                                  setSelectedTaskId(task.id);
+                                  setOpenModal(true);
+                                  setOpenMenuId(null);
+                                }}>
+                                <div className="p-1 bg-red-50 rounded-md group-hover:bg-red-100 transition-colors">
+                                  <HiOutlineTrash
+                                    size={14}
+                                    className="text-red-600"
+                                  />
+                                </div>
+
+                                <span className="text-xs font-semibold text-gray-700 group-hover:text-red-600">
+                                  Delete
+                                </span>
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Pagination
+            currentPage={tasksList?.pageNumber || 1}
+            totalRecords={tasksList?.totalNumberOfRecords || 0}
+            pageSize={tasksList?.pageSize || 10}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+            }}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
+      ) : (
+        <NoData />
+      )}
     </>
   );
 }
