@@ -16,10 +16,12 @@ import { MdOutlineUnfoldMore } from "react-icons/md";
 
 // API & Utils
 import { DeleteProject, GetProjects } from "../../../../api/module/project";
+
 import { getProjectStatus } from "../../../../api/utils/projectStatus";
 
 // Components
 import CrudHeader from "../../../Shared/Components/CrudHeader/CrudHeader";
+
 import {
   Table,
   TableHead,
@@ -30,17 +32,23 @@ import {
   Modal,
   ModalBody,
 } from "flowbite-react";
+import NoData from "../../../Shared/Components/NoData/NotData";
 
 export default function ProjectList() {
   const navigation = useNavigate();
 
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
+
+  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
+    null,
+  );
 
   const [openViewModal, setOpenViewModal] = useState(false);
+
   const [selectedProject, setSelectedProject] = useState<any>(null);
 
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+
   const [projects, setProjects] = useState<any[]>([]);
 
   // ================= FUNCTIONS =================
@@ -164,6 +172,23 @@ export default function ProjectList() {
       </Modal>
 
       {/* Table & Filters */}
+      
+      <div className="overflow-x-auto shadow-md mx-10 bg-white rounded-lg mt-5">
+         {projects?.length > 0 ? (
+          <>
+        
+        <div className="flex items-center gap-2 p-4">
+          <div className="relative w-64">
+            
+            <input
+              placeholder="Search Projects"
+              className="w-full bg-transparent rounded-full border border-[#26385A40] px-10 py-2 pr-10 outline-none placeholder:text-[#AAAAAA]"
+            />
+
+            <FiSearch
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+      {/* Table & Filters */}
       <div className="overflow-x-auto shadow-md mx-10 bg-white rounded-lg mt-5">
         <div className="flex items-center gap-2 p-4">
           <div className="relative w-64">
@@ -177,7 +202,43 @@ export default function ProjectList() {
             <IoFilterSharp size={18} /> Filter
           </button>
         </div>
+       
+      
+        <Table className="w-full text-left">
+          <TableHead className="bg-[#315951E5] text-white">
+            <TableRow>
+              <TableHeadCell>
+                <div className="flex items-center gap-2">
+                  Title
+                  <MdOutlineUnfoldMore />
+                </div>
+              </TableHeadCell>
 
+              <TableHeadCell>
+                <div className="flex items-center gap-2">
+                  Status
+                  <MdOutlineUnfoldMore />
+                </div>
+              </TableHeadCell>
+
+              <TableHeadCell>Num Users</TableHeadCell>
+
+              <TableHeadCell>
+                <div className="flex items-center gap-2">
+                  Num Tasks
+                  <MdOutlineUnfoldMore />
+                </div>
+              </TableHeadCell>
+
+              <TableHeadCell>
+                <div className="flex items-center gap-2">
+                  Date Created
+                  <MdOutlineUnfoldMore />
+                </div>
+              </TableHeadCell>
+
+              <TableHeadCell />
+            </TableRow>
         <Table className="w-full text-left">
           <TableHead className="bg-[#315951E5] text-white">
             <TableHeadCell>Title <MdOutlineUnfoldMore className="inline ml-1" /></TableHeadCell>
@@ -201,6 +262,7 @@ export default function ProjectList() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+
                         toggleMenu(project.id);
                       }}
                       className="text-gray-500 hover:text-gray-700"
@@ -242,7 +304,12 @@ export default function ProjectList() {
               </TableRow>
             ))}
           </TableBody>
+
         </Table>
+        </>
+         ) : (
+    <NoData />
+  )}
       </div>
     </>
   );
