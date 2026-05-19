@@ -328,28 +328,151 @@ export default function TaskList() {
             </button>
           </div>
 
-          {/* Table */}
-          <Table className="border-collapse rounded-0      ">
-            <TableHead className="bg-[#315951E5] text-white">
-              <TableRow>
-                <TableHeadCell className="border-r border-black/20">
-                  <div className="flex items-center gap-2 cursor-pointer">
-                    Title
-                    <MdOutlineUnfoldMore size={20} />
-                  </div>
-                </TableHeadCell>
+        {/* Table */}
 
-                <TableHeadCell className="border-r border-black/20">
-                  <div className="flex items-center gap-2 cursor-pointer text-md">
-                    Status
-                    <MdOutlineUnfoldMore size={20} />
-                  </div>
-                </TableHeadCell>
+        
+        <Table className="border-collapse rounded-0      ">
+          <TableHead className="bg-[#315951E5] text-white">
+            <TableRow>
+              <TableHeadCell className="border-r border-black/20">
+                <div className="flex items-center gap-2 cursor-pointer">
+                  Title
+                  <MdOutlineUnfoldMore size={20} />
+                </div>
+              </TableHeadCell>
 
-                <TableHeadCell className="border-r border-black/20">
-                  <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
-                    User
-                    <MdOutlineUnfoldMore size={20} />
+              <TableHeadCell className="border-r border-black/20">
+                <div className="flex items-center gap-2 cursor-pointer text-md">
+                  Status
+                  <MdOutlineUnfoldMore size={20} />
+                </div>
+              </TableHeadCell>
+
+              <TableHeadCell className="border-r border-black/20">
+                <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
+                  User
+                  <MdOutlineUnfoldMore size={20} />
+                </div>
+              </TableHeadCell>
+
+              <TableHeadCell className="border-r border-black/20">
+                <div className="flex items-center gap-2 cursor-pointer">
+                  Project
+                  <MdOutlineUnfoldMore size={20} />
+                </div>
+              </TableHeadCell>
+
+              <TableHeadCell className="border-r border-black/20">
+                <div className="flex items-center gap-2 cursor-pointer">
+                  Created Date
+                  <MdOutlineUnfoldMore size={20} />
+                </div>
+              </TableHeadCell>
+
+              <TableHeadCell></TableHeadCell>
+            </TableRow>
+          </TableHead>
+          <TableBody className="divide-y-0">
+            {tasksList?.data?.map((task) => (
+              <TableRow
+                key={task.id}
+                className="odd:bg-white even:bg-[#F5F5F5] border-none">
+                <TableCell className="whitespace-nowrap font-medium text-black border-none">
+                  {task.title}
+                </TableCell>
+
+                <TableCell className="text-black border-none text-lg">
+                  {task.status}
+                </TableCell>
+
+                <TableCell className="text-black  border-none text-lg">
+                  {task.employee?.userName || "No User"}
+                </TableCell>
+
+                <TableCell className="text-black border-none text-lg">
+                  {task.project?.title || "No Project"}
+                </TableCell>
+
+                <TableCell className="text-black border-none text-lg">
+                  {new Date(task.creationDate).toLocaleDateString("en-GB")}
+                </TableCell>
+
+                <TableCell className="relative border-none text-lg">
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => toggleMenu(task.id)} //
+                      className="text-[#315951E5] hover:bg-gray-100 p-1 rounded-full transition-colors">
+                      <BsThreeDotsVertical size={25} />
+                    </button>
+
+                    {openMenuId === task.id && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-[60] bg-transparent"
+                          onClick={() => setOpenMenuId(null)}></div>
+
+                        <div className="fixed right-20 bottom-30 mt-10 w-32 bg-[#3159517c] shadow-[0_10px_30px_rgba(0,0,0,0.2)] rounded-xl z-[9999] p-1.5 ">
+                          <div className="flex flex-col gap-0.5">
+                            {/* View */}
+                            <button
+                              className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-green-50 transition-all group text-white"
+                              onClick={() => {
+                                getTask(task.id);
+                                setOpenViewModal(true);
+                                setOpenMenuId(null);
+                              }}>
+                              <div className="p-1 bg-green-50 rounded-md group-hover:bg-green-100 transition-colors">
+                                <HiOutlineEye
+                                  size={14}
+                                  className="text-green-600"
+                                />
+                              </div>
+                              <span className="text-xs font-semibold text-gray-700 group-hover:text-green-600">
+                                View
+                              </span>
+                            </button>
+
+                            {/* Edit */}
+                            <button
+                              className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-yellow-50 transition-all group text-white"
+                              onClick={() => {
+                                setOpenMenuId(null);
+                                navigate(`/dashboard/edit-task/${task.id}`);
+                              }}>
+                              <div className="p-1 bg-yellow-50 rounded-md group-hover:bg-yellow-100 transition-colors">
+                                <HiOutlinePencilAlt
+                                  size={14}
+                                  className="text-yellow-500"
+                                />
+                              </div>
+                              <span className="text-xs font-semibold text-gray-700 group-hover:text-yellow-600">
+                                Edit
+                              </span>
+                            </button>
+
+                            {/* Delete */}
+                            <button
+                              className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-red-50 transition-all group"
+                              onClick={() => {
+                                setSelectedTaskId(task.id);
+                                setOpenModal(true);
+                                setOpenMenuId(null);
+                              }}>
+                              <div className="p-1 bg-red-50 rounded-md group-hover:bg-red-100 transition-colors">
+                                <HiOutlineTrash
+                                  size={14}
+                                  className="text-red-600"
+                                />
+                              </div>
+
+                              <span className="text-xs font-semibold text-gray-700 group-hover:text-red-600">
+                                Delete
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </TableHeadCell>
 

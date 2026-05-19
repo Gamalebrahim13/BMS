@@ -46,8 +46,13 @@ export const GetUsersCount = async (): Promise<UserCountResponse> => {
   const response = await axiosClient.get("/Users/count");
   return response.data;
 };
-export const GetAllUsersByMangers = async () => {
-  const response = await axiosClient.get("/Users/Manager");
+export const GetAllUsersByMangers = async (pageNumber: number, pageSize: number) => {
+  const response = await axiosClient.get("/Users/Manager", {
+    params: {
+      pageNumber,
+      pageSize
+    }
+  });
   return response.data;
 };
 export const GetUserById = async (id: string) => {
