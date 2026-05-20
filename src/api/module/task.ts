@@ -63,11 +63,12 @@ export const CreateTask = async (data: CreateTaskDTO) => {
 };
 
 // Get All Tasks
-export const GetAllTasks = async (pageNumber: number, pageSize: number) => {
+export const GetAllTasks = async (pageNumber: number, pageSize: number,title?: string) => {
   const response = await axiosClient.get("/Task/Manager", {
     params: {
       pageNumber,
-      pageSize
+      pageSize,
+       ...(title ? { title } : {}),
     }
   });
   return response.data;
