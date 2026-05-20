@@ -325,13 +325,11 @@ export default function TaskList() {
       <div className="overflow-x-auto shadow-md mx-10 rounded-lg bg-white">
         <div className="flex items-center gap-2">
           {/* Filteration */}
-          <div className="m-4 relative w-64">
-            <Filter
-              searchValue={searchValue}
-              setSearchValue={setSearchValue}
-              placeholder="Search By Title"
-            />
-          </div>
+          <Filter
+            searchValue={searchValue}
+            setSearchValue={setSearchValue}
+            placeholder="Search By Title"
+          />
         </div>
 
         {/* Table */}
