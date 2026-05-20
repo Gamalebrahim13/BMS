@@ -6,7 +6,7 @@ import { login } from "../../../../api/module/auth";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../../context/AuthContext";
 import type { LoginData } from "../../../../api/module/auth";
-import Input from "../../../Shared/Components/CustomeInput/custominput";
+import Input from "../../../Shared/Components/CustomInput/custominput";
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const context = useContext(AuthContext);
