@@ -18,7 +18,12 @@ export type UserTask = {
   modificationDate: string;
   project: Project;
 };
-
+export type UserFilters = {
+  userName?: string;
+  email?: string;
+  country?: string;
+  groups?: number[]; // مصفوفة أرقام كما في الصورة
+};
 export type user = {
   id: number;
   userName: string;
@@ -46,11 +51,14 @@ export const GetUsersCount = async (): Promise<UserCountResponse> => {
   const response = await axiosClient.get("/Users/count");
   return response.data;
 };
-export const GetAllUsersByMangers = async (pageNumber: number, pageSize: number) => {
-  const response = await axiosClient.get("/Users/Manager", {
+export const GetAllUsersByMangers = async (params: { pageNumber?: number; pageSize?: number; userName?: string } = {}) => {
+  const cleanUserName = params.userName && params.userName.trim() !== "" ? params.userName.trim() : undefined;
+
+  const response = await axiosClient.get("/Users", {
     params: {
-      pageNumber,
-      pageSize
+      pageNumber: params.pageNumber || 1,
+      pageSize: params.pageSize || 10,
+      userName: cleanUserName // 👈 
     }
   });
   return response.data;
