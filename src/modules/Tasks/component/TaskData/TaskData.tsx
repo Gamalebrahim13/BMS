@@ -9,9 +9,9 @@ import {
   UpdateTaskById,
 } from "../../../../api/module/task";
 import { GetProjects } from "../../../../api/module/project";
-import { GetAllUsersByMangers } from "../../../../api/module/user";
 
 import { toast } from "react-toastify";
+import { GetAllUsersByMangers } from "../../../../api/module/user";
 
 export default function TaskData() {
   const navigate = useNavigate();
