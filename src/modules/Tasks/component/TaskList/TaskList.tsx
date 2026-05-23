@@ -48,6 +48,7 @@ export default function TaskList() {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [searchValue, setSearchValue] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState(searchValue);
+  const [loading, setLoading] = useState(false);
   const toggleMenu = (id: number) => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
@@ -58,6 +59,8 @@ export default function TaskList() {
   const [tasksList, setTasksList] = useState<TasksResponse | null>(null);
   const navigate = useNavigate();
   const getTasksList = async (page: number, title: string = "") => {
+    setLoading(true);
+
     try {
       const response = await GetAllTasks(page, pageSize, title);
       setTasksList(response);
@@ -75,6 +78,8 @@ export default function TaskList() {
       } else {
         toast.error(error?.response?.data?.message || "Something went wrong");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -125,7 +130,7 @@ export default function TaskList() {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(searchValue);
-    }, 500); 
+    }, 500);
 
     return () => {
       clearTimeout(handler);
@@ -332,10 +337,12 @@ export default function TaskList() {
           />
         </div>
 
-        
-
         {/* Table */}
-        {tasksList?.data && tasksList.data.length > 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="loader"></div>
+          </div>
+        ) : tasksList?.data && tasksList.data.length > 0 ? (
           <>
             <Table className="border-collapse rounded-0      ">
               <TableHead className="bg-[#315951E5] text-white">
@@ -498,6 +505,7 @@ export default function TaskList() {
                 ))}
               </TableBody>
             </Table>
+
             <Pagination
               currentPage={tasksList?.pageNumber || 1}
               totalRecords={tasksList?.totalNumberOfRecords || 0}
