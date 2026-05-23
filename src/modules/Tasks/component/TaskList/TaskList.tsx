@@ -341,7 +341,7 @@ export default function TaskList() {
               <TableHead className="bg-[#315951E5] text-white">
                 <TableRow>
                   <TableHeadCell className="border-r border-black/20">
-                    <div className="flex items-center gap-2 cursor-pointer">
+                    <div className="flex items-center gap-2 ">
                       Title
                       <MdOutlineUnfoldMore size={20} />
                     </div>
