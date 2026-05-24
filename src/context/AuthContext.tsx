@@ -3,12 +3,15 @@ import { jwtDecode } from "jwt-decode";
 
 
 interface DecodedToken {
+  userId?: number;     
   userName?: string;
   userEmail?: string;
-  role?: string;
-  id?: string;
+  userGroup?: string;  
+  roles?: string[];     
   exp?: number;
+  iat?: number;
 }
+
 interface AuthContextType {
   loginData: DecodedToken | null;
   saveLoginData: (token: string) => void; 
