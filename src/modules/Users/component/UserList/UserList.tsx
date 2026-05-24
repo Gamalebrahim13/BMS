@@ -11,8 +11,12 @@ import { FaEarthAmericas } from 'react-icons/fa6';
 import NoData from '../../../Shared/Components/NoData/NotData';
 import Pagination from '../../../Shared/Components/Pagination/Pagination';
 import Filter from '../../../Shared/Components/Filter/Filter';
+import { useAuth } from '../../../../context/AuthContext';
+import NotFound from '../../../Shared/Components/NotFound/NotFound';
 
 export default function UserList() {
+    const { loginData } = useAuth();
+
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<user | null>(null);
@@ -77,7 +81,10 @@ export default function UserList() {
       clearTimeout(handler);
     };
   }, [searchValue]);
-
+  
+if (loginData?.userGroup !== "Manager") {
+  return <NotFound />;
+}
   return (
     <>
       <CrudHeader title="Users" />
