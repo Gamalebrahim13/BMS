@@ -62,7 +62,7 @@ export default function Dashboard() {
 
 <div className={`grid grid-cols-1 gap-6 px-5 ${loginData?.userGroup === "Manager" ? "lg:grid-cols-2" : "grid-cols-1"}`}>
   
-  <div className="p-6 rounded-3xl bg-white shadow-sm">
+  <div className="p-6 rounded-3xl  shadow-sm">
     <div className="flex items-start gap-3 mb-6 relative pl-3">
       <div className="absolute left-0 top-0 w-[4px] h-full bg-[#FF9F43] rounded-full"></div>
       <div>
@@ -131,7 +131,7 @@ export default function Dashboard() {
 
 
   {loginData?.userGroup === "Manager" && (
-    <div className="p-6 rounded-3xl bg-white shadow-sm">
+    <div className="p-6 rounded-3xl  shadow-sm">
       <div className="flex items-start gap-3 mb-6 relative pl-3">
         <div className="absolute left-0 top-0 w-[4px] h-full bg-[#FF9F43] rounded-full"></div>
         <div>
