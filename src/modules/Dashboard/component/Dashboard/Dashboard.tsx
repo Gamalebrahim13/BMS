@@ -14,30 +14,54 @@ export default function Dashboard() {
   const [totalProjects, setTotalProjects] = useState<number>(0);
   const [userCounts, setUserCounts] = useState<UserCountResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-      const [tasksCountData, projectsData, usersData] = await Promise.all([
-        GetTasksCount(),
-        GetProjects({ pageNumber: 1, pageSize: 10 }),
-        GetUsersCount()
-      ]);
+const fetchDashboardData = async () => {
+  if (!loginData?.userGroup) return;
+
+  try {
+    setLoading(true);
+
+    if (loginData.userGroup === "Employee") {
+      const tasksCountData = await GetTasksCount();
 
       setTaskCounts(tasksCountData);
-      setTotalProjects(projectsData?.totalNumberOfRecords || 0);
+      setTotalProjects(0);
+      setUserCounts(null);
+
+    } else {
+      const [tasksCountData, projectsData, usersData] =
+        await Promise.all([
+          GetTasksCount(),
+          GetProjects({ pageNumber: 1, pageSize: 10 }),
+          GetUsersCount(),
+        ]);
+
+      setTaskCounts(tasksCountData);
+      setTotalProjects(
+        projectsData?.totalNumberOfRecords || 0
+      );
       setUserCounts(usersData);
-    } catch (error: any) {
-      const errorMessage = error?.response?.data?.message || "Something went wrong while fetching data!";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
     }
-  };
+
+  }catch (error: any) {
+    console.log(error);
+
+    const errorMessage =
+      error?.response?.data?.message ||
+      "Something went wrong while fetching data!";
+
+    toast.error(errorMessage);
+
+  } finally {
+    setLoading(false);
+  }
+};
   const totalTasks = taskCounts ? (taskCounts.toDo + taskCounts.inProgress + taskCounts.done) : 0;
   const progressValue = taskCounts ? taskCounts.done : 0;
-  useEffect(() => {
-    fetchDashboardData()
-  }, [])
+ useEffect(() => {
+  if (loginData?.userGroup) {
+    fetchDashboardData();
+  }
+}, [loginData]);
   return (
     <>
       <div className="px-5 pb-8 mt-5">
@@ -62,7 +86,7 @@ export default function Dashboard() {
 
         <div className={`grid grid-cols-1 gap-6 px-5 ${loginData?.userGroup === "Manager" ? "lg:grid-cols-2" : "grid-cols-1"}`}>
 
-          <div className="p-6 rounded-3xl  shadow-sm">
+          <div className="p-6">
             <div className="flex items-start gap-3 mb-6 relative pl-3">
               <div className="absolute left-0 top-0 w-[4px] h-full bg-[#FF9F43] rounded-full"></div>
               <div>
