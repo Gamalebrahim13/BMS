@@ -114,3 +114,18 @@ export const ChangeStatus = async (
 
   return response.data;
 };
+export const GetEmployeeTasks = async (pageNumber: number, pageSize: number, status?: string, title?: string): Promise<TasksResponse> => {
+  const response = await axiosClient.get("/Task", {
+    params: {
+      pageNumber,
+      pageSize,
+      ...(status ? { status } : {}),
+      ...(title ? { title } : {}),
+    }
+  });
+  return response.data;
+};
+export const EmployeeChangeStatus = async (id: string, data: ChangeStatusDTO) => {
+  const response = await axiosClient.put(`/Task/${id}/change-status`, data);
+  return response.data;
+};

@@ -41,8 +41,11 @@ import type { TasksResponse } from "../../../../api/module/task";
 import NoData from "../../../Shared/Components/NoData/NotData";
 import Pagination from "../../../Shared/Components/Pagination/Pagination";
 import Filter from "../../../Shared/Components/Filter/Filter";
+import { useAuth } from "../../../../context/AuthContext";
+import TaskBoard from "../../../Taskboard/component/TaskBoard/TaskBoard";
 
 export default function TaskList() {
+   const { loginData } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
@@ -124,6 +127,7 @@ export default function TaskList() {
   };
 
   useEffect(() => {
+    if (!loginData || loginData?.userGroup !== "Manager") return;
     getTasksList(currentPage, debouncedSearch);
   }, [currentPage, pageSize, debouncedSearch]);
 
@@ -136,7 +140,9 @@ export default function TaskList() {
       clearTimeout(handler);
     };
   }, [searchValue]);
-
+if (loginData?.userGroup !== "Manager") {
+  return <TaskBoard />;
+}
   return (
     <>
       <CrudHeader
