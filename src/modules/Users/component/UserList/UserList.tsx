@@ -217,7 +217,7 @@ export default function UserList() {
       </Modal>
 
       {/* Table Container */}
-      <div className="shadow-md mx-2 sm:mx-4 md:mx-8 lg:mx-10 rounded-lg bg-white dark:bg-[#161619] border dark:border-zinc-800 transition-colors duration-300">
+      <div className="shadow-md mx-2 sm:mx-4 md:mx-8 lg:mx-10 rounded-lg bg-white dark:bg-[#161619]  transition-colors duration-300">
         
         {/* الـ Filter مع كلاسات الـ Zinc */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 dark:text-zinc-200 [&_input]:dark:bg-[#161619] [&_input]:dark:border-zinc-800 [&_input]:dark:text-zinc-100 [&_input]:dark:placeholder-zinc-500">

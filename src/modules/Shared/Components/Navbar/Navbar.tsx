@@ -39,7 +39,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* 1. LOGOUT MODAL (الشاشة المنبثقة لتسجيل الخروج) */}
       {showLogout && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div
@@ -47,10 +46,8 @@ export default function Navbar() {
             onClick={handleLogoutClose}
           />
 
-          {/* بوكس المودال الرئيسي */}
           <div className="relative bg-white dark:bg-zinc-900 border border-transparent dark:border-zinc-800 rounded-3xl p-6 w-full max-w-md shadow-2xl flex flex-col items-center animate-in fade-in zoom-in-95 duration-200 z-10">
             
-            {/* زرار الإغلاق (X) */}
             <button
               type="button"
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 p-1.5 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors"
@@ -104,8 +101,7 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* 2. NAVBAR MAIN CONTAINER (شريط الناف بار الرئيسي) */}
-      <div className="flex items-center justify-between p-4 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_20px_-5px_rgba(0,0,0,0.3)] bg-white dark:bg-zinc-900 border-b dark:border-zinc-800/50 transition-colors duration-300">
+      <div className="flex items-center justify-between p-4 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_20px_-5px_rgba(0,0,0,0.3)] bg-white dark:bg-zinc-900  dark:border-zinc-800/50 transition-colors duration-300">
         
         {/* اللوجو */}
         <div className="flex items-center gap-3">
