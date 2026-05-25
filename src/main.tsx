@@ -3,9 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import AuthProvider from './context/AuthContext.tsx'
-import { applySavedTheme } from "./modules/Shared/utils/theme";
-applySavedTheme();
-
+document.documentElement.classList.add("dark")
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
 

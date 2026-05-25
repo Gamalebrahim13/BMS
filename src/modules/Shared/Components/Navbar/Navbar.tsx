@@ -1,10 +1,12 @@
 import { useAuth } from '../../../../context/AuthContext'
 import logo from "../../../../assets/images/navbar-logo.png"
-import defult from "../../../../assets/images/defult-user-img.png"
-import { useState } from 'react';
+import userImage from "../../../../assets/images/defult-user-img.png"
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineLockClosed, HiOutlineLogout } from 'react-icons/hi';
 import { toast } from 'react-toastify';
+import { GetCurrentUser } from "../../../../api/module/user";
+
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
