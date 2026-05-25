@@ -1,5 +1,8 @@
 import axiosClient from "../axiosClient";
-
+export const GetCurrentUser = async () => {
+  const response = await axiosClient.get("/Users/currentUser");
+  return response.data;
+};
 
 export type Project = {
   id: number;

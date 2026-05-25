@@ -1,14 +1,18 @@
 import { useAuth } from '../../../../context/AuthContext'
 import logo from "../../../../assets/images/navbar-logo.png"
-import defult from "../../../../assets/images/defult-user-img.png"
-import { useState } from 'react';
+import userImage from "../../../../assets/images/defult-user-img.png"
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineLockClosed, HiOutlineLogout } from 'react-icons/hi';
 import { toast } from 'react-toastify';
+import { GetCurrentUser } from "../../../../api/module/user";
+
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [showLogout, setShowLogout] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
+    const [currentUser, setCurrentUser] = useState<any>(null);
     const navigate = useNavigate();
 
     const toggleDropdown = () => {
@@ -23,9 +27,65 @@ export default function Navbar() {
     toast.success("LogOut Success")
     navigate("/login");
   };
+ 
     const { loginData } = useAuth();
+    useEffect(() => {
+  const fetchCurrentUser = async () => {
+    const data = await GetCurrentUser();
+    setCurrentUser(data);
+  };
+
+  fetchCurrentUser();
+}, []);
+
     return (
         <>
+        
+ {showProfile && (
+  <div className="absolute right-10 top-20 w-[350px] bg-white  rounded-2xl shadow-2xl p-6 z-50">
+
+    <div className="flex flex-col items-center">
+
+<img
+  src={`https://upskilling-egypt.com:3003/${currentUser?.imagePath}`}
+  alt="profile"
+  className="w-20 h-20 rounded-full"
+/>
+      <h2 className="text-xl font-bold mt-3">
+        {currentUser?.userName}
+      </h2>
+
+      <p className="text-gray-500 ">
+        {currentUser?.email}
+      </p>
+
+    </div>
+
+    <div className="mt-6 border-t pt-4 ">
+
+      <p className="text-black">
+        Group: {currentUser?.group?.name}
+      </p>
+
+      <p className="text-black">
+  Phone: {currentUser?.phoneNumber}
+</p>
+
+<p className="text-black">
+  Country: {currentUser?.country}
+</p>
+
+    </div>
+
+    <button
+      onClick={() => setShowProfile(false)}
+      className="mt-5 w-full bg-primary text-white py-2 rounded-xl"
+    >
+      Close
+    </button>
+
+  </div>
+)}
       {showLogout && (
   <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
     
@@ -48,7 +108,7 @@ export default function Navbar() {
 
       <div className="flex flex-col items-center bg-[#0E382F]/[0.03] border border-[#0E382F]/[0.08] rounded-2xl p-5 w-full max-w-[280px] mb-6 mt-4">
         <img 
-          src={ defult} 
+           src={`https://upskilling-egypt.com:3003/${currentUser?.imagePath}`} 
           alt="User Avatar" 
           className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md mb-3"
         />
@@ -94,18 +154,25 @@ export default function Navbar() {
                     className=" h-12"
                 />
             </div>
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-300">
+          
                 <div className="flex items-center pr-6 mr-2 border-r border-[#9A9A9A]">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-yellow-500 hover:text-yellow-600 cursor-pointer transition-colors" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="{2}" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>
                 </div>
 
-                <div className="flex items-center justify-between p-2 bg-white rounded-lg max-w-sm cursor-pointer hover:bg-gray-50 transition-colors">
+                <div
+                onClick={() => setShowProfile(!showProfile)}
+                 className="flex items-center justify-between p-2 bg-white rounded-lg max-w-sm cursor-pointer hover:bg-gray-50 transition-colors">
 
                     <div className="flex items-center gap-4">
                         <img
-                            src={defult}
+                            src={
+  currentUser?.imagePath
+    ? `https://upskilling-egypt.com:3003/${currentUser.imagePath}`
+    : userImage
+}
                             alt="User Profile"
                             className="w-14 h-14 rounded-full object-cover"
                         />

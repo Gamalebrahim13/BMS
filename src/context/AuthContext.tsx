@@ -6,7 +6,7 @@ interface DecodedToken {
   userName?: string;
   userEmail?: string;
   role?: string;
-  id?: string;
+  id?: string
   exp?: number;
 }
 interface AuthContextType {
