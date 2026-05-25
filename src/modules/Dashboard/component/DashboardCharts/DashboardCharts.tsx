@@ -63,7 +63,7 @@ const TaskDonutChart: React.FC<DonutChartProps> = ({ series, labels, colors }) =
         options={options}
         series={series}
         type="donut"
-        width={380}
+        width={300}
       />
     </div>
   );

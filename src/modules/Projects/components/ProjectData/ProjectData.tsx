@@ -9,11 +9,14 @@ import {
   UpdateProject,
   GetProjectById,
 } from "../../../../api/module/project";
+import  { toast } from "react-toastify";
 
 
-type ProjectFormData = {
+
+ type ProjectData = {
   title: string;
   description: string;
+   
 };
 
 export default function ProjectData() {
@@ -28,51 +31,79 @@ export default function ProjectData() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ProjectFormData>();
+  } = useForm<ProjectData>();
 
   
-  const getProjectDetails = async () => {
+const getProjectDetails = async () => {
     try {
-      const response = await GetProjectById(Number(id));
-
-      console.log(response);
+      const response = await GetProjectById(Number(id!));
 
       reset({
         title: response.title,
         description: response.description,
+       
       });
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      const errors = error?.response?.data?.additionalInfo?.errors;
+
+      if (errors) {
+        Object.values(errors).forEach((messages: any) => {
+          if (Array.isArray(messages)) {
+            messages.forEach((msg: string) => {
+              toast.error(msg);
+            });
+          }
+        });
+      } else {
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      }
     }
   };
 
- 
 
+  const onSubmit = async (data: any) => {
+     try {
+       const payload = {
+         title: data.title,
+         description: data.description,
+         
+       };
+ 
+       
+ 
+       if (isEditMode) {
+         await UpdateProject(Number(id!), payload);
+         toast.success("Project updated successfully");
+       } else {
+         await AddProject(payload);
+         toast.success("Project created successfully");
+       }
+ 
+       navigate("/dashboard/project-list");
+     } catch (error: any) {
+       const errors = error?.response?.data?.additionalInfo?.errors;
+ 
+       if (errors) {
+         Object.values(errors).forEach((messages: any) => {
+           if (Array.isArray(messages)) {
+             messages.forEach((msg: string) => {
+               toast.error(msg);
+             });
+           }
+         });
+       } else {
+         toast.error(error?.response?.data?.message || "Something went wrong");
+       }
+     }
+   };
+ 
+ 
   useEffect(() => {
     if (isEditMode) {
       getProjectDetails();
     }
   }, []);
 
- 
-
-  const onSubmit = async (data: ProjectFormData) => {
-    try {
-      if (isEditMode) {
-        await UpdateProject(Number(id), data);
-
-        console.log("Project Updated Successfully");
-      } else {
-        await AddProject(data);
-
-        console.log("Project Added Successfully");
-      }
-
-      navigate("/dashboard/project-list");
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <>
@@ -154,3 +185,6 @@ export default function ProjectData() {
     </>
   );
 }
+
+
+
