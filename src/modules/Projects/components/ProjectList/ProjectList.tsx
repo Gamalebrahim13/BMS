@@ -25,7 +25,6 @@ import {
   MdEditSquare,
   MdEmail,
   MdOutlineUnfoldMore,
-  MdVerified,
 } from "react-icons/md";
 
 import { toast } from "react-toastify";
@@ -37,14 +36,19 @@ import {
   GetProjects,
   DeleteProject,
   GetProjectById,
+  GetProjectEmployee,
 } from "../../../../api/module/project";
 
 import { FaUser } from "react-icons/fa";
 import { FaEarthAmericas } from "react-icons/fa6";
-import { GrStatusGood } from "react-icons/gr";
+import { useAuth } from "../../../../context/AuthContext";
 
 export default function ProjectList() {
   const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const { loginData } = useAuth();
+  const isManager = loginData?.userGroup === "Manager";
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -56,7 +60,7 @@ export default function ProjectList() {
   const [projectsList, setProjectsList] = useState<any>(null);
 
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
-    null
+    null,
   );
 
   const [selectedProject, setSelectedProject] = useState<any>(null);
@@ -68,29 +72,28 @@ export default function ProjectList() {
     setOpenMenuId(openMenuId === id ? null : id);
   };
 
-  // ================= Get Projects =================
-
   const getProjectsList = async () => {
+    if (!loginData?.userGroup) return;
     try {
-      const response = await GetProjects({
+      setIsLoading(true);
+
+      const params = {
         pageNumber: currentPage,
-        pageSize: pageSize,
-        title: debouncedSearch,
-      });
+        pageSize,
+        title: debouncedSearch || undefined,
+      };
 
-      
-
+      const response = isManager
+        ? await GetProjects(params)
+        : await GetProjectEmployee(params);
+      console.log(response);
       setProjectsList(response);
     } catch (error: any) {
-      console.log("Get Projects Error:", error);
-
-      toast.error(
-        error?.response?.data?.message || "Failed to fetch projects"
-      );
+      toast.error(error?.response?.data?.message || "Failed to fetch projects");
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  // ================= Delete Project =================
 
   const handleDeleteProject = async () => {
     try {
@@ -104,13 +107,9 @@ export default function ProjectList() {
     } catch (error: any) {
       console.log("Delete Error:", error);
 
-      toast.error(
-        error?.response?.data?.message || "Failed to delete project"
-      );
+      toast.error(error?.response?.data?.message || "Failed to delete project");
     }
   };
-
-  // ================= View Project =================
 
   const getProject = async (id: number) => {
     try {
@@ -124,20 +123,22 @@ export default function ProjectList() {
       console.log("Get Project Error:", error);
 
       toast.error(
-        error?.response?.data?.message || "Unable to fetch data from API"
+        error?.response?.data?.message || "Unable to fetch data from API",
       );
+      setSelectedProject(null);
     }
   };
 
-  // ================= useEffect =================
-
   useEffect(() => {
+    if (!loginData?.userGroup) return;
+
     getProjectsList();
-  }, [currentPage, pageSize, debouncedSearch]);
+  }, [currentPage, pageSize, debouncedSearch, loginData?.userGroup]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(searchValue);
+      setCurrentPage(1);
     }, 500);
 
     return () => {
@@ -149,8 +150,10 @@ export default function ProjectList() {
     <>
       <CrudHeader
         title="Projects"
-        buttonText="Add New Project"
-        onButtonClick={() => navigate("/dashboard/project-data")}
+        buttonText={isManager ? "Add New Project" : undefined}
+        onButtonClick={
+          isManager ? () => navigate("/dashboard/project-data") : undefined
+        }
       />
 
       {/* Delete Modal */}
@@ -159,8 +162,7 @@ export default function ProjectList() {
         show={openModal}
         size="lg"
         popup
-        onClose={() => setOpenModal(false)}
-      >
+        onClose={() => setOpenModal(false)}>
         <ModalBody className="bg-white text-gray-900 rounded-lg p-6 shadow-lg">
           <div className="mb-4">
             <div className="text-center py-6">
@@ -174,15 +176,13 @@ export default function ProjectList() {
             <div className="flex justify-center gap-4 mt-6">
               <button
                 className="bg-gray-200 border border-secondary text-gray-900 px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-300 transition-colors"
-                onClick={() => setOpenModal(false)}
-              >
+                onClick={() => setOpenModal(false)}>
                 Cancel
               </button>
 
               <button
                 className="bg-red-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
-                onClick={handleDeleteProject}
-              >
+                onClick={handleDeleteProject}>
                 Delete
               </button>
             </div>
@@ -192,115 +192,115 @@ export default function ProjectList() {
 
       {/* View Modal */}
 
-<Modal
-  show={openViewModal}
-  size="2xl"
-  onClose={() => setOpenViewModal(false)}
->
-  <ModalBody className="bg-white rounded-xl p-8">
+      <Modal
+        show={openViewModal}
+        size="2xl"
+        onClose={() => setOpenViewModal(false)}>
+        <ModalBody className="bg-white rounded-xl p-8">
+          {/* Title */}
+          <h2 className="text-2xl font-bold text-[#315951] mb-8 border-b pb-4">
+            Project Details
+          </h2>
 
-    {/* Title */}
-    <h2 className="text-2xl font-bold text-[#315951] mb-8 border-b pb-4">
-      Project Details
-    </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative">
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-gray-100 -translate-x-1/2"></div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative">
+            {/* LEFT SIDE */}
+            <div className="space-y-5">
+              <div className="flex items-center gap-3">
+                <MdEditSquare size={18} className="text-[#315951]" />
+                <p className="text-sm">
+                  <span className="font-semibold text-gray-700">Title:</span>{" "}
+                  <span className="text-[#315951] font-bold">
+                    {selectedProject?.title || "-"}
+                  </span>
+                </p>
+              </div>
 
-      <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-gray-100 -translate-x-1/2"></div>
+              <div className="flex items-start gap-3">
+                <MdDescription size={18} className="text-[#315951]" />
+                <p className="text-sm">
+                  <span className="font-semibold text-gray-700">
+                    Description:
+                  </span>
+                  <span className="text-[#315951] font-bold">
+                    {selectedProject?.description || "-"}
+                  </span>
+                </p>
+              </div>
 
-      {/* LEFT SIDE */}
-      <div className="space-y-5">
+              <div className="flex items-center gap-3">
+                <MdDateRange size={18} className="text-[#315951]" />
+                <p className="text-sm">
+                  <span className="font-semibold text-gray-700">Created:</span>{" "}
+                  <span className="text-[#315951] font-bold">
+                    {selectedProject?.creationDate
+                      ? new Date(
+                          selectedProject.creationDate,
+                        ).toLocaleDateString("en-GB")
+                      : "-"}
+                  </span>
+                </p>
+              </div>
+            </div>
 
-        <div className="flex items-center gap-3">
-          <MdEditSquare size={18} className="text-[#315951]" />
-          <p className="text-sm">
-            <span className="font-semibold text-gray-700">Title:</span>{" "}
-            <span className="text-[#315951] font-bold">
-              {selectedProject?.title || "-"}
-            </span>
-          </p>
-        </div>
+            {/* RIGHT SIDE */}
+            <div className="space-y-5">
+              <div className="flex items-center gap-3">
+                <FaUser size={16} className="text-[#315951]" />
+                <p className="text-sm">
+                  <span className="font-semibold text-gray-700">
+                    Project ID:
+                  </span>
+                  <span className="text-[#315951] font-bold">
+                    {selectedProject?.id || "-"}
+                  </span>
+                </p>
+              </div>
 
-        <div className="flex items-start gap-3">
-          <MdDescription size={18} className="text-[#315951]" />
-          <p className="text-sm">
-            <span className="font-semibold text-gray-700">Description:</span>{" "}
-            <span className="text-[#315951] font-bold">
-              {selectedProject?.description || "-"}
-            </span>
-          </p>
-        </div>
+              <div className="flex items-center gap-3">
+                <MdEmail size={16} className="text-[#315951]" />
+                <p className="text-sm">
+                  <span className="font-semibold text-gray-700">
+                    Modified Date:
+                  </span>{" "}
+                  <span className="text-[#315951] font-bold">
+                    {selectedProject?.modificationDate
+                      ? new Date(
+                          selectedProject.modificationDate,
+                        ).toLocaleDateString("en-GB")
+                      : "-"}
+                  </span>
+                </p>
+              </div>
 
-        <div className="flex items-center gap-3">
-          <MdDateRange size={18} className="text-[#315951]" />
-          <p className="text-sm">
-            <span className="font-semibold text-gray-700">Created:</span>{" "}
-            <span className="text-[#315951] font-bold">
-              {selectedProject?.creationDate
-                ? new Date(selectedProject.creationDate).toLocaleDateString("en-GB")
-                : "-"}
-            </span>
-          </p>
-        </div>
+              <div className="flex items-center gap-3">
+                <FaEarthAmericas size={16} className="text-[#315951]" />
+                <p className="text-sm">
+                  <span className="font-semibold text-gray-700">Tasks:</span>{" "}
+                  <span className="text-[#315951] font-bold">
+                    {selectedProject?.task?.length ?? 0}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
 
-      </div>
-
-      {/* RIGHT SIDE */}
-      <div className="space-y-5">
-
-        <div className="flex items-center gap-3">
-          <FaUser size={16} className="text-[#315951]" />
-          <p className="text-sm">
-            <span className="font-semibold text-gray-700">Project ID:</span>{" "}
-            <span className="text-[#315951] font-bold">
-              {selectedProject?.id || "-"}
-            </span>
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <MdEmail size={16} className="text-[#315951]" />
-          <p className="text-sm">
-            <span className="font-semibold text-gray-700">Modified Date:</span>{" "}
-            <span className="text-[#315951] font-bold">
-              {selectedProject?.modificationDate
-                ? new Date(selectedProject.modificationDate).toLocaleDateString("en-GB")
-                : "-"}
-            </span>
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <FaEarthAmericas size={16} className="text-[#315951]" />
-          <p className="text-sm">
-            <span className="font-semibold text-gray-700">Tasks:</span>{" "}
-            <span className="text-[#315951] font-bold">
-              {selectedProject?.task?.length ?? 0}
-            </span>
-          </p>
-        </div>
-
-      </div>
-
-    </div>
-
-    {/* Footer */}
-    <div className="mt-10 pt-6 border-t flex justify-end">
-      <button
-        onClick={() => setOpenViewModal(false)}
-        className="px-6 py-2 bg-[#315951] text-white rounded-lg font-medium hover:bg-[#25443d] transition-colors"
-      >
-        Close
-      </button>
-    </div>
-
-  </ModalBody>
-</Modal>
+          {/* Footer */}
+          <div className="mt-10 pt-6 border-t flex justify-end">
+            <button
+              onClick={() => setOpenViewModal(false)}
+              className="px-6 py-2 bg-[#315951] text-white rounded-lg font-medium hover:bg-[#25443d] transition-colors">
+              Close
+            </button>
+          </div>
+        </ModalBody>
+      </Modal>
 
       {/* Table Wrapper */}
 
-      <div className="overflow-x-auto shadow-md mx-10 rounded-lg bg-white">
-        <div className="flex items-center gap-2">
+      <div className="shadow-md mx-2 sm:mx-4 md:mx-8 lg:mx-10 rounded-lg bg-white">
+           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4">
           {/* Filteration */}
 
           <Filter
@@ -310,90 +310,109 @@ export default function ProjectList() {
           />
         </div>
 
-        {projectsList?.data?.length > 0 ? (
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="loader" />
+          </div>
+        ) : projectsList?.data?.length > 0 ? (
           <>
-            <Table className="border-collapse rounded-0">
-              <TableHead className="bg-[#315951E5] text-white">
-                <TableRow>
-                  <TableHeadCell className="border-r border-black/20">
-                    <div className="flex items-center gap-2 cursor-pointer">
-                      Title
-                      <MdOutlineUnfoldMore size={20} />
-                    </div>
-                  </TableHeadCell>
+            <div className="max-h-[500px] overflow-y-auto">
+             <Table className="min-w-[900px] border-collapse">
+                <TableHead className="  bg-[#315951E5] text-white  ">
+                  <TableRow>
+                    <TableHeadCell className="border-r border-black/20 ">
+                      <div className="flex items-center gap-2">
+                        Title
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
 
-                  <TableHeadCell className="border-r border-black/20">
-                    <div className="flex items-center gap-2 cursor-pointer">
-                      Status
-                      <MdOutlineUnfoldMore size={20} />
-                    </div>
-                  </TableHeadCell>
+                    <TableHeadCell className="border-r border-black/20">
+                      <div className="flex items-center gap-2 cursor-pointer">
+                        {isManager ? "Status" : "Description"}
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
 
-                  <TableHeadCell className="border-r border-black/20">
-                    <div className="flex items-center gap-2 cursor-pointer">
-                      Num Users
-                      <MdOutlineUnfoldMore size={20} />
-                    </div>
-                  </TableHeadCell>
+                    <TableHeadCell className="border-r border-black/20">
+                      <div className="flex items-center gap-2 cursor-pointer">
+                        {isManager ? "Users" : "Modification Date"}
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
 
-                  <TableHeadCell className="border-r border-black/20">
-                    <div className="flex items-center gap-2 cursor-pointer">
-                      Num Tasks
-                      <MdOutlineUnfoldMore size={20} />
-                    </div>
-                  </TableHeadCell>
+                    <TableHeadCell className="border-r border-black/20">
+                      <div className="flex items-center gap-2 cursor-pointer">
+                        Tasks
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
 
-                  <TableHeadCell className="border-r border-black/20">
-                    <div className="flex items-center gap-2 cursor-pointer">
-                      Date Created
-                      <MdOutlineUnfoldMore size={20} />
-                    </div>
-                  </TableHeadCell>
+                    <TableHeadCell className="border-r border-black/20">
+                      <div className="flex items-center gap-2 cursor-pointer">
+                        Created Date
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
 
-                  <TableHeadCell></TableHeadCell>
-                </TableRow>
-              </TableHead>
+                    {isManager && (
+                      <TableHeadCell className="border-r border-black/20">
+                      </TableHeadCell>
+                    )}
+                  </TableRow>
+                </TableHead>
+                <TableBody className="divide-y-0">
+                  {projectsList?.data?.map((project: any) => (
+                    <TableRow
+                      key={project.id}
+                      className="odd:bg-white even:bg-[#F5F5F5] border-none">
+                      {/* TITLE */}
+                      <TableCell className="whitespace-nowrap font-medium text-black">
+                        {project.title || "-"}
+                      </TableCell>
 
-              <TableBody className="divide-y-0">
-                {projectsList?.data?.map((project: any) => (
-                  <TableRow
-                    key={project.id}
-                    className="odd:bg-white even:bg-[#F5F5F5] border-none"
-                  >
-                    <TableCell>{project?.title || "-"}</TableCell>
+                      {/* STATUS / DESCRIPTION */}
+                      <TableCell className="text-black">
+                        {isManager
+                          ? project.status || "-"
+                          : project.description || "-"}
+                      </TableCell>
 
-                    <TableCell>{project?.status || "-"}</TableCell>
+                      {/* USERS / MODIFICATION DATE */}
+                      <TableCell className="text-black">
+                        {isManager
+                          ? project.numUsers || 0
+                          : project.modificationDate
+                            ? new Date(
+                                project.modificationDate,
+                              ).toLocaleDateString("en-GB")
+                            : "-"}
+                      </TableCell>
 
-                    <TableCell>
-                      {project?.usersCount ||
-                        project?.numUsers ||
-                        project?.employeeCount ||
-                        0}
-                    </TableCell>
+                      {/* TASKS */}
+                      <TableCell className="text-black">
+                        {project?.task?.length || 0}
+                      </TableCell>
 
-                    <TableCell>
-                     {project?.task?.length || 0}
-                    </TableCell>
-
-                    <TableCell>
-                      {project?.creationDate
-                        ? new Date(
-                            project.creationDate
-                          ).toLocaleDateString("en-GB")
-                        : "-"}
-                    </TableCell>
-
-                    <TableCell className="relative">
-                      <div className="flex justify-center relative">
+                      {/* CREATED DATE */}
+                      <TableCell className="text-black">
+                        {project.creationDate
+                          ? new Date(project.creationDate).toLocaleDateString(
+                              "en-GB",
+                            )
+                          : "-"}
+                      </TableCell>
+                      {isManager && (
+                    <TableCell className="relative border-none text-lg">
+                      <div className="flex justify-center">
                         <button
-                          onClick={() => toggleMenu(project.id)}
-                          className="text-[#315951E5]"
-                        >
+                          onClick={() => toggleMenu(project.id)} //
+                          className="text-[#315951E5] hover:bg-gray-100 p-1 rounded-full transition-colors">
                           <BsThreeDotsVertical size={25} />
                         </button>
 
                         {openMenuId === project.id && (
-                            <>
+                          <>
                             <div
                               className="fixed inset-0 z-[60] bg-transparent"
                               onClick={() => setOpenMenuId(null)}></div>
@@ -405,7 +424,6 @@ export default function ProjectList() {
                                   className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-green-50 transition-all group text-white"
                                   onClick={() => {
                                     getProject(project.id);
-                                    // console.log(project);
                                     setOpenViewModal(true);
                                     setOpenMenuId(null);
                                   }}>
@@ -425,7 +443,7 @@ export default function ProjectList() {
                                   className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-yellow-50 transition-all group text-white"
                                   onClick={() => {
                                     setOpenMenuId(null);
-                                    navigate(`/dashboard/project-data/${project.id}`);
+                                    navigate(`/dashboard/edit-task/${project.id}`);
                                   }}>
                                   <div className="p-1 bg-yellow-50 rounded-md group-hover:bg-yellow-100 transition-colors">
                                     <HiOutlinePencilAlt
@@ -463,10 +481,12 @@ export default function ProjectList() {
                         )}
                       </div>
                     </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                      )}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
             <Pagination
               currentPage={projectsList?.pageNumber || 1}
