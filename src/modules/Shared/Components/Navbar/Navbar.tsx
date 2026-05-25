@@ -64,7 +64,7 @@ export default function Navbar() {
             {/* كارت البروفايل المصغر داخل المودال */}
             <div className="flex flex-col items-center bg-[#0E382F]/[0.03] dark:bg-[#0E382F]/[0.1] border border-[#0E382F]/[0.08] dark:border-[#0E382F]/[0.2] rounded-2xl p-5 w-full max-w-[280px] mb-6 mt-4">
               <img
-                src={defult}
+                src={userImage}
                 alt="User Avatar"
                 className="w-16 h-16 rounded-full object-cover border-2 border-white dark:border-zinc-800 shadow-md mb-3"
               />
@@ -138,7 +138,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between p-2 bg-white dark:bg-zinc-900 rounded-lg min-w-[320px] cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-850/50 transition-colors relative">
             <div className="flex items-center gap-4">
               <img
-                src={defult}
+                src={userImage}
                 alt="User Profile"
                 className="w-14 h-14 rounded-full object-cover border dark:border-zinc-800"
               />
