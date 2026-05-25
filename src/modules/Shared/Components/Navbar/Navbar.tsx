@@ -112,10 +112,8 @@ export default function Navbar() {
           />
         </div>
 
-        {/* الجانب الأيمن (الأزرار والبروفايل) */}
         <div className="flex items-center gap-5 text-gray-500 dark:text-zinc-400 px-10">
           
-          {/* زرار التبديل لـ الدارك مود */}
           <button
             onClick={toggleTheme}
             className="p-2.5 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 transition-colors text-lg"
@@ -123,14 +121,12 @@ export default function Navbar() {
             🌙
           </button>
 
-          {/* الجرس (الإشعارات) */}
           <div className="flex items-center pr-6 mr-2 border-r border-gray-200 dark:border-zinc-800">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-yellow-500 hover:text-yellow-600 cursor-pointer transition-colors" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
           </div>
 
-          {/* كارت معلومات المستخدم */}
           <div className="flex items-center justify-between p-2 bg-white dark:bg-zinc-900 rounded-lg min-w-[320px] cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-850/50 transition-colors relative">
             <div className="flex items-center gap-4">
               <img
@@ -148,7 +144,6 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* السهم والـ Dropdown */}
             <div className="relative">
               <div
                 className="text-black/40 dark:text-zinc-400 pl-4 cursor-pointer hover:text-black dark:hover:text-white transition-colors"
@@ -165,7 +160,6 @@ export default function Navbar() {
                 </svg>
               </div>
 
-              {/* القائمة المنسدلة (Dropdown Menu) */}
               <div
                 className={`absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-900 rounded-xl shadow-lg border border-gray-100 dark:border-zinc-800 py-1 z-50 origin-top-right transition-all duration-200 ease-out
                   ${isOpen

@@ -25,7 +25,7 @@ export type UserFilters = {
   userName?: string;
   email?: string;
   country?: string;
-  groups?: number[]; // مصفوفة أرقام كما في الصورة
+  groups?: number[]; 
 };
 export type user = {
   id: number;
