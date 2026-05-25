@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
 
@@ -9,7 +9,28 @@ interface DonutChartProps {
 }
 
 const TaskDonutChart: React.FC<DonutChartProps> = ({ series, labels, colors }) => {
-  
+  // معرفين الـ State بنوع boolean صريح للـ TypeScript
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+
+  useEffect(() => {
+    const updateDarkMode = () => {
+      setIsDarkMode(document.documentElement.classList.contains("dark"));
+    };
+
+    // نحدث الحالة أول ما الكومبوننت يفتح
+    updateDarkMode();
+
+    // الـ Observer السري عشان يراقب الـ Dark Mode أول ما يتغير
+    const observer = new MutationObserver(updateDarkMode);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // الـ Options هنا واخدة نوع ApexOptions صريح
   const options: ApexOptions = {
     chart: {
       type: "donut",
@@ -25,7 +46,8 @@ const TaskDonutChart: React.FC<DonutChartProps> = ({ series, labels, colors }) =
         fontSize: "14px",
         fontFamily: "Helvetica, Arial, sans-serif",
         fontWeight: "bold",
-        colors: ["#000"],
+        // الألوان بتتغير بناءً على حالة الـ Dark Mode
+        colors: [isDarkMode ? "#ffffff" : "#333333"],
       },
       formatter: function (val: number) {
         return Math.round(val) + "%";
@@ -42,8 +64,9 @@ const TaskDonutChart: React.FC<DonutChartProps> = ({ series, labels, colors }) =
       },
     },
     stroke: {
-      colors: ["#fff"],
-      width: 1,
+      // الفواصل بين ألوان الدائرة
+      colors: [isDarkMode ? "#161619" : "#ffffff"],
+      width: 2,
     },
     responsive: [
       {
@@ -60,6 +83,8 @@ const TaskDonutChart: React.FC<DonutChartProps> = ({ series, labels, colors }) =
   return (
     <div id="chart">
       <ReactApexChart
+        // الـ Key السحري عشان يجبر الـ ApexCharts تعيد بناء نفسها أول ما تقلبي الـ Mode
+        key={isDarkMode ? "dark-chart" : "light-chart"} 
         options={options}
         series={series}
         type="donut"
