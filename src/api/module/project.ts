@@ -19,6 +19,20 @@ export const GetProjects = async (
    
   return response.data;
 };
+
+
+export const GetProjectEmployee = async (
+  params: GetProjectsParams
+) => {
+  const response = await axiosClient.get(
+    "/Project/employee",
+    {
+      params,
+    }
+  );
+   
+  return response.data;
+};
 export const DeleteProject = async (id: number) => {
   try {
     const response = await axiosClient.delete(`/Project/${id}`);

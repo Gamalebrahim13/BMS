@@ -41,8 +41,11 @@ import type { TasksResponse } from "../../../../api/module/task";
 import NoData from "../../../Shared/Components/NoData/NotData";
 import Pagination from "../../../Shared/Components/Pagination/Pagination";
 import Filter from "../../../Shared/Components/Filter/Filter";
+import { useAuth } from "../../../../context/AuthContext";
+import TaskBoard from "../../../Taskboard/component/TaskBoard/TaskBoard";
 
 export default function TaskList() {
+   const { loginData } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
@@ -124,6 +127,7 @@ export default function TaskList() {
   };
 
   useEffect(() => {
+    if (!loginData || loginData?.userGroup !== "Manager") return;
     getTasksList(currentPage, debouncedSearch);
   }, [currentPage, pageSize, debouncedSearch]);
 
@@ -136,7 +140,9 @@ export default function TaskList() {
       clearTimeout(handler);
     };
   }, [searchValue]);
-
+if (loginData?.userGroup !== "Manager") {
+  return <TaskBoard />;
+}
   return (
     <>
       <CrudHeader
@@ -327,8 +333,8 @@ export default function TaskList() {
 
       {/* Table Wrapper */}
 
-      <div className="overflow-x-auto shadow-md mx-10 rounded-lg bg-white">
-        <div className="flex items-center gap-2">
+      <div className="shadow-md mx-2 sm:mx-4 md:mx-8 lg:mx-10 rounded-lg bg-white">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4">
           {/* Filteration */}
           <Filter
             searchValue={searchValue}
@@ -344,167 +350,189 @@ export default function TaskList() {
           </div>
         ) : tasksList?.data && tasksList.data.length > 0 ? (
           <>
-            <Table className="border-collapse rounded-0      ">
-              <TableHead className="bg-[#315951E5] text-white">
-                <TableRow>
-                  <TableHeadCell className="border-r border-black/20">
-                    <div className="flex items-center gap-2 ">
-                      Title
-                      <MdOutlineUnfoldMore size={20} />
-                    </div>
-                  </TableHeadCell>
-
-                  <TableHeadCell className="border-r border-black/20">
-                    <div className="flex items-center gap-2 cursor-pointer text-md">
-                      Status
-                      <MdOutlineUnfoldMore size={20} />
-                    </div>
-                  </TableHeadCell>
-
-                  <TableHeadCell className="border-r border-black/20">
-                    <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
-                      User
-                      <MdOutlineUnfoldMore size={20} />
-                    </div>
-                  </TableHeadCell>
-
-                  <TableHeadCell className="border-r border-black/20">
-                    <div className="flex items-center gap-2 cursor-pointer">
-                      Project
-                      <MdOutlineUnfoldMore size={20} />
-                    </div>
-                  </TableHeadCell>
-
-                  <TableHeadCell className="border-r border-black/20">
-                    <div className="flex items-center gap-2 cursor-pointer">
-                      Created Date
-                      <MdOutlineUnfoldMore size={20} />
-                    </div>
-                  </TableHeadCell>
-
-                  <TableHeadCell></TableHeadCell>
-                </TableRow>
-              </TableHead>
-              <TableBody className="divide-y-0">
-                {tasksList?.data?.map((task) => (
-                  <TableRow
-                    key={task.id}
-                    className="odd:bg-white even:bg-[#F5F5F5] border-none">
-                    <TableCell className="whitespace-nowrap font-medium text-black border-none">
-                      {task.title}
-                    </TableCell>
-
-                    <TableCell className="border-none text-lg">
-                      <span
-                        className="px-5 py-2 rounded-full text-white text-sm font-medium"
-                        style={{
-                          backgroundColor:
-                            task.status === "todo"
-                              ? "#E4E2F5"
-                              : task.status === "inprogress"
-                                ? "#EF9B28A3"
-                                : task.status === "done"
-                                  ? "#009247"
-                                  : "#E4E1F5",
-                        }}>
-                        {task.status}
-                      </span>
-                    </TableCell>
-
-                    <TableCell className="text-black  border-none text-lg">
-                      {task.employee?.userName || "No User"}
-                    </TableCell>
-
-                    <TableCell className="text-black border-none text-lg">
-                      {task.project?.title || "No Project"}
-                    </TableCell>
-
-                    <TableCell className="text-black border-none text-lg">
-                      {new Date(task.creationDate).toLocaleDateString("en-GB")}
-                    </TableCell>
-
-                    <TableCell className="relative border-none text-lg">
-                      <div className="flex justify-center">
-                        <button
-                          onClick={() => toggleMenu(task.id)} //
-                          className="text-[#315951E5] hover:bg-gray-100 p-1 rounded-full transition-colors">
-                          <BsThreeDotsVertical size={25} />
-                        </button>
-
-                        {openMenuId === task.id && (
-                          <>
-                            <div
-                              className="fixed inset-0 z-[60] bg-transparent"
-                              onClick={() => setOpenMenuId(null)}></div>
-
-                            <div className="fixed right-20 bottom-30 mt-10 w-32 bg-[#3159517c] shadow-[0_10px_30px_rgba(0,0,0,0.2)] rounded-xl z-[9999] p-1.5 ">
-                              <div className="flex flex-col gap-0.5">
-                                {/* View */}
-                                <button
-                                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-green-50 transition-all group text-white"
-                                  onClick={() => {
-                                    getTask(task.id);
-                                    setOpenViewModal(true);
-                                    setOpenMenuId(null);
-                                  }}>
-                                  <div className="p-1 bg-green-50 rounded-md group-hover:bg-green-100 transition-colors">
-                                    <HiOutlineEye
-                                      size={14}
-                                      className="text-green-600"
-                                    />
-                                  </div>
-                                  <span className="text-xs font-semibold text-gray-700 group-hover:text-green-600">
-                                    View
-                                  </span>
-                                </button>
-
-                                {/* Edit */}
-                                <button
-                                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-yellow-50 transition-all group text-white"
-                                  onClick={() => {
-                                    setOpenMenuId(null);
-                                    navigate(`/dashboard/edit-task/${task.id}`);
-                                  }}>
-                                  <div className="p-1 bg-yellow-50 rounded-md group-hover:bg-yellow-100 transition-colors">
-                                    <HiOutlinePencilAlt
-                                      size={14}
-                                      className="text-yellow-500"
-                                    />
-                                  </div>
-                                  <span className="text-xs font-semibold text-gray-700 group-hover:text-yellow-600">
-                                    Edit
-                                  </span>
-                                </button>
-
-                                {/* Delete */}
-                                <button
-                                  className="flex items-center gap-2 text-white px-2 py-1.5 rounded-lg hover:bg-red-50 transition-all group"
-                                  onClick={() => {
-                                    setSelectedTaskId(task.id);
-                                    setOpenModal(true);
-                                    setOpenMenuId(null);
-                                  }}>
-                                  <div className="p-1 bg-red-50 rounded-md group-hover:bg-red-100 transition-colors">
-                                    <HiOutlineTrash
-                                      size={14}
-                                      className="text-red-600"
-                                    />
-                                  </div>
-
-                                  <span className="text-xs font-semibold text-gray-700 group-hover:text-red-600">
-                                    Delete
-                                  </span>
-                                </button>
-                              </div>
-                            </div>
-                          </>
-                        )}
+            <div className="max-h-[500px] overflow-x-auto">
+               <Table className="min-w-[900px] border-collapse w-full">
+                <TableHead className="bg-[#315951E5] text-white">
+                  <TableRow>
+                    <TableHeadCell className="border-r border-black/20">
+                      <div className="flex items-center gap-2 ">
+                        Title
+                        <MdOutlineUnfoldMore size={20} />
                       </div>
-                    </TableCell>
+                    </TableHeadCell>
+
+                    <TableHeadCell className="border-r border-black/20">
+                      <div className="flex items-center gap-2 cursor-pointer text-md">
+                        Status
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
+
+                    <TableHeadCell className="border-r border-black/20">
+                      <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
+                        User
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
+
+                    <TableHeadCell className="border-r border-black/20">
+                      <div className="flex items-center gap-2 cursor-pointer">
+                        Project
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
+
+                    <TableHeadCell className="border-r border-black/20">
+                      <div className="flex items-center gap-2 cursor-pointer">
+                        Created Date
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
+
+                    <TableHeadCell></TableHeadCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHead>
+                <TableBody className="divide-y-0">
+                  {tasksList?.data?.map((task) => (
+                    <TableRow
+                      key={task.id}
+                      className="odd:bg-white even:bg-[#F5F5F5] border-none">
+                      <TableCell className="whitespace-nowrap font-medium text-black border-none">
+                        {task.title}
+                      </TableCell>
+
+                      <TableCell className="border-none text-lg">
+                        {(() => {
+                          const statusStyles: Record<string, string> = {
+                            todo: "bg-[#E4E2F5] text-white",
+                            inprogress: "bg-[#EF9B28A3] text-white",
+                            done: "bg-[#009247] text-white",
+                          };
+
+                          const statusLabels: Record<string, string> = {
+                            todo: "Todo",
+                            inprogress: "in progress",
+                            done: "done",
+                          };
+
+                          const normalizedStatus =
+                            task.status?.toLowerCase().replace(/\s+/g, "") ||
+                            "";
+
+                          const currentStyle =
+                            statusStyles[normalizedStatus] ||
+                            "bg-gray-100 text-gray-700";
+                          const currentLabel =
+                            statusLabels[normalizedStatus] || task.status;
+
+                          return (
+                            <span
+                              className={`px-4 py-1.5 rounded-full text-xs font-normal ${currentStyle}`}>
+                              {currentLabel}
+                            </span>
+                          );
+                        })()}
+                      </TableCell>
+
+                      <TableCell className="text-black  border-none text-lg">
+                        {task.employee?.userName || "No User"}
+                      </TableCell>
+
+                      <TableCell className="text-black border-none text-lg">
+                        {task.project?.title || "No Project"}
+                      </TableCell>
+
+                      <TableCell className="text-black border-none text-lg">
+                        {new Date(task.creationDate).toLocaleDateString(
+                          "en-GB",
+                        )}
+                      </TableCell>
+
+                      <TableCell className="relative border-none text-lg">
+                        <div className="flex justify-center">
+                          <button
+                            onClick={() => toggleMenu(task.id)} //
+                            className="text-[#315951E5] hover:bg-gray-100 p-1 rounded-full transition-colors">
+                            <BsThreeDotsVertical size={25} />
+                          </button>
+
+                          {openMenuId === task.id && (
+                            <>
+                              <div
+                                className="fixed inset-0 z-[60] bg-transparent"
+                                onClick={() => setOpenMenuId(null)}></div>
+
+                              <div className="fixed right-20 bottom-30 mt-10 w-32 bg-[#3159517c] shadow-[0_10px_30px_rgba(0,0,0,0.2)] rounded-xl z-[9999] p-1.5 ">
+                                <div className="flex flex-col gap-0.5">
+                                  {/* View */}
+                                  <button
+                                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-green-50 transition-all group text-white"
+                                    onClick={() => {
+                                      getTask(task.id);
+                                      setOpenViewModal(true);
+                                      setOpenMenuId(null);
+                                    }}>
+                                    <div className="p-1 bg-green-50 rounded-md group-hover:bg-green-100 transition-colors">
+                                      <HiOutlineEye
+                                        size={14}
+                                        className="text-green-600"
+                                      />
+                                    </div>
+                                    <span className="text-xs font-semibold text-gray-700 group-hover:text-green-600">
+                                      View
+                                    </span>
+                                  </button>
+
+                                  {/* Edit */}
+                                  <button
+                                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-yellow-50 transition-all group text-white"
+                                    onClick={() => {
+                                      setOpenMenuId(null);
+                                      navigate(
+                                        `/dashboard/edit-task/${task.id}`,
+                                      );
+                                    }}>
+                                    <div className="p-1 bg-yellow-50 rounded-md group-hover:bg-yellow-100 transition-colors">
+                                      <HiOutlinePencilAlt
+                                        size={14}
+                                        className="text-yellow-500"
+                                      />
+                                    </div>
+                                    <span className="text-xs font-semibold text-gray-700 group-hover:text-yellow-600">
+                                      Edit
+                                    </span>
+                                  </button>
+
+                                  {/* Delete */}
+                                  <button
+                                    className="flex items-center gap-2 text-white px-2 py-1.5 rounded-lg hover:bg-red-50 transition-all group"
+                                    onClick={() => {
+                                      setSelectedTaskId(task.id);
+                                      setOpenModal(true);
+                                      setOpenMenuId(null);
+                                    }}>
+                                    <div className="p-1 bg-red-50 rounded-md group-hover:bg-red-100 transition-colors">
+                                      <HiOutlineTrash
+                                        size={14}
+                                        className="text-red-600"
+                                      />
+                                    </div>
+
+                                    <span className="text-xs font-semibold text-gray-700 group-hover:text-red-600">
+                                      Delete
+                                    </span>
+                                  </button>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
             <Pagination
               currentPage={tasksList?.pageNumber || 1}
