@@ -6,12 +6,15 @@ import { useNavigate } from 'react-router-dom';
 import { HiOutlineLockClosed, HiOutlineLogout } from 'react-icons/hi';
 import { toast } from 'react-toastify';
 import { GetCurrentUser } from "../../../../api/module/user";
+import { Modal, ModalBody } from 'flowbite-react';
 
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -36,9 +39,18 @@ export default function Navbar() {
       localStorage.setItem("theme", "light");
     }
   };
+  useEffect(() => {
+  GetCurrentUser().then((res) => {
+    setCurrentUser(res);
+  });
+}, []);
 
   return (
     <>
+  
+
+
+
       {showLogout && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div

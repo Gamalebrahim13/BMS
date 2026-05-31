@@ -74,10 +74,3 @@ export const ToggleUserActivation = async (id: number) => {
   const response = await axiosClient.put(`/Users/${id}`);
   return response.data;
 };
-// export const DeleteTaskById = async (id: string) => {
-//   const response = await axiosClient.delete(
-//     `/Task/${id}`
-//   );
-
-//   return response.data;
-// };

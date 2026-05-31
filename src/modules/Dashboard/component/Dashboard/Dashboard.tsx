@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GetTasksCount, type TaskCountResponse } from "../../../../api/module/task";
+import { GetEmployeeTasks, GetTasksCount, type TaskCountResponse } from "../../../../api/module/task";
 import headerBg from "../../../../assets/images/dashboard-header-bg.png"
 import { useAuth } from "../../../../context/AuthContext";
 import TaskDonutChart from "../DashboardCharts/DashboardCharts";
@@ -14,18 +14,33 @@ export default function Dashboard() {
   const [userCounts, setUserCounts] = useState<UserCountResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const fetchDashboardData = async () => {
+ const fetchDashboardData = async () => {
     if (!loginData?.userGroup) return;
 
     try {
       setLoading(true);
 
       if (loginData.userGroup === "Employee") {
-        const tasksCountData = await GetTasksCount();
+        // بننادي الفانكشن الصح بتاعة الموظف من الفايل بتاعك
+        const [tasksCountData, tasksResponse] = await Promise.all([
+          GetTasksCount(),
+          GetEmployeeTasks(1, 100) 
+        ]);
+
         setTaskCounts(tasksCountData);
-        setTotalProjects(0);
+
+        
+        const allTasks = tasksResponse?.data || [];
+        const uniqueProjectIds = new Set(
+          allTasks
+            .filter((task: any) => task.project) 
+            .map((task: any) => task.project?.id) 
+        );
+
+        setTotalProjects(uniqueProjectIds.size); 
         setUserCounts(null);
       } else {
+   
         const [tasksCountData, projectsData, usersData] =
           await Promise.all([
             GetTasksCount(),
@@ -47,7 +62,7 @@ export default function Dashboard() {
   };
 
   const totalTasks = taskCounts ? (taskCounts.toDo + taskCounts.inProgress + taskCounts.done) : 0;
-  const progressValue = taskCounts ? taskCounts.done : 0;
+  const progressValue = taskCounts ? taskCounts.inProgress : 0;
 
   useEffect(() => {
     if (loginData?.userGroup) {
@@ -59,14 +74,12 @@ export default function Dashboard() {
     <>
       <div className="px-3 sm:px-5 pb-8 mt-5 transition-colors duration-300">
         
-        {/* Header (البانر الترحيبي) */}
         <div className="relative w-full h-[220px] sm:h-[260px] lg:h-[320px] rounded-2xl overflow-hidden mb-6 shadow-sm">
           <img
             src={headerBg}
             alt="Header"
             className="w-full h-full object-cover"
           />
-          {/* في الـ Dark مود بيعمل overlay أغمق شوية عشان الكلام ينور */}
           <div className="absolute inset-0 bg-black/40 dark:bg-black/50 flex items-center">
             <div className="px-4 sm:px-8 lg:pl-10 text-white max-w-xl">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 break-words">
@@ -79,7 +92,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Main Grid */}
         <div
           className={`
             grid 
@@ -89,9 +101,6 @@ export default function Dashboard() {
             ${loginData?.userGroup === "Manager" ? "xl:grid-cols-2" : "grid-cols-1"}
           `}
         >
-
-          {/* ================= Tasks Section ================= */}
-          {/* ضفنا خلفية للسكشن وحدود في الدارك مود عشان يفصل عن خلفية الـ Layout */}
           <div className="p-4 sm:p-6 rounded-3xl bg-white dark:bg-[#111112] border border-transparent dark:border-zinc-900 shadow-sm transition-colors">
 
             {/* Title */}
@@ -107,13 +116,10 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Content */}
             <div className={`flex flex-col ${loginData?.userGroup === "Employee" ? "xl:flex-row xl:items-center xl:justify-between gap-8" : ""}`}>
 
-              {/* Cards Container */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 flex-1">
 
-                {/* Card 1: Progress */}
                 <div className="bg-[#EBEAF8] dark:bg-[#161619] border border-transparent dark:border-zinc-800/60 p-5 rounded-2xl flex flex-col justify-between min-h-[140px] transition-colors">
                   <div className="bg-[#D1CFF3] dark:bg-[#5f51e8]/[0.15] w-11 h-11 rounded-2xl flex items-center justify-center text-[#5F51E8] dark:text-[#8176f2]">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,7 +135,6 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Card 2: Tasks Number */}
                 <div className="bg-[#F7F9D5]/60 dark:bg-[#161619] border border-transparent dark:border-zinc-800/60 p-5 rounded-2xl flex flex-col justify-between min-h-[140px] transition-colors">
                   <div className="bg-[#E9ECAC] dark:bg-[#7a7e26]/[0.2] w-11 h-11 rounded-2xl flex items-center justify-center text-[#7A7E26] dark:text-[#b4bb3e]">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,7 +149,6 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Card 3: Projects Number */}
                 <div className="bg-[#FCE5EE] dark:bg-[#161619] border border-transparent dark:border-zinc-800/60 p-5 rounded-2xl flex flex-col justify-between min-h-[140px] transition-colors">
                   <div className="bg-[#F9C3D6] dark:bg-[#d81b60]/[0.15] w-11 h-11 rounded-2xl flex items-center justify-center text-[#D81B60] dark:text-[#e54b84]">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -160,7 +164,6 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Chart */}
               <div className="flex justify-center items-center">
                 <TaskDonutChart
                   series={[
