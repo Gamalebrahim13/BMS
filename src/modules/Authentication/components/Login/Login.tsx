@@ -6,7 +6,7 @@ import { login } from "../../../../api/module/auth";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../../context/AuthContext";
 import type { LoginData } from "../../../../api/module/auth";
-import Input from "../../../Shared/Components/custominput";
+import Input from "../../../Shared/Components/CustomInput/custominput";
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const context = useContext(AuthContext);
@@ -24,16 +24,13 @@ export default function Login() {
     handleSubmit,
   } = useForm<LoginData>();
 
-  const onSubmit = async (data: LoginData) => {
-    if (loading) return;
-
+  const onSubmit = async (data: LoginData,) => {
     setLoading(true);
-
     try {
       const response = await login(data);
       console.log(response);
       saveLoginData(response.token);
-      navigate("/register");
+      navigate("/dashboard");
       toast.success("Login Successfully");
     } catch (error: any) {
       const errors = error?.response?.data?.additionalInfo?.errors;
@@ -54,7 +51,8 @@ export default function Login() {
     }
   };
   return (
-    <>
+    
+    <div className="w-full max-w-md mx-auto bg-[#315951cc] backdrop-blur-sm rounded-2xl p-6 md:p-10 shadow-2xl border border-white/10" >
       <div className="text-white mb-10">
         <span className="text-sm font-light  text-white">welcome to PMS</span>
         <h3 className="text-3xl text-primary relative font-bold mt-1">
@@ -91,12 +89,13 @@ export default function Login() {
         </div>
 
         <button
+          type="submit"
           disabled={loading}
           className="bg-primary text-white w-full px-8 py-2 mt-10 rounded-full">
           {loading ? "Loading..." : "Login"}
         </button>
       </form>
-    </>
+      </div>
   );
 }
 
