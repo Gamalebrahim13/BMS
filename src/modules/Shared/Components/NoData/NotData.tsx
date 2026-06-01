@@ -1,4 +1,4 @@
-import nodataImg from "../../../../assets/images/no-data.png";
+import nodataImg from "../../../../assets/images/No-data.png";
 
 interface NoDataProps {
   title?: string;
