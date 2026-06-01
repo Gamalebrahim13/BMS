@@ -1,0 +1,561 @@
+import { useEffect, useState } from "react";
+import CrudHeader from "../../../Shared/Components/CrudHeader/CrudHeader";
+import { useNavigate } from "react-router-dom";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { FiSearch } from "react-icons/fi";
+import { IoFilterSharp } from "react-icons/io5";
+import { Modal, ModalBody } from "flowbite-react";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { MdDescription } from "react-icons/md";
+import { MdEditSquare } from "react-icons/md";
+import { GrStatusGood } from "react-icons/gr";
+import { MdDateRange } from "react-icons/md";
+import { FaUser } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
+import { FaEarthAmericas } from "react-icons/fa6";
+import { MdVerified } from "react-icons/md";
+import { BsRadioactive } from "react-icons/bs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadCell,
+  TableRow,
+} from "flowbite-react";
+
+import {
+  HiOutlinePencilAlt,
+  HiOutlineTrash,
+  HiOutlineEye,
+} from "react-icons/hi";
+import {
+  DeleteTaskById,
+  GetAllTasks,
+  GetTaskById,
+} from "../../../../api/module/task";
+import { MdOutlineUnfoldMore } from "react-icons/md";
+import { toast } from "react-toastify";
+import type { Task } from "../../../../api/module/task";
+import type { TasksResponse } from "../../../../api/module/task";
+import NoData from "../../../Shared/Components/NoData/NotData";
+import Pagination from "../../../Shared/Components/Pagination/Pagination";
+import Filter from "../../../Shared/Components/Filter/Filter";
+import { useAuth } from "../../../../context/AuthContext";
+import TaskBoard from "../../../Taskboard/component/TaskBoard/TaskBoard";
+
+export default function TaskList() {
+   const { loginData } = useAuth();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchValue);
+  const [loading, setLoading] = useState(false);
+  const toggleMenu = (id: number) => {
+    setOpenMenuId(openMenuId === id ? null : id);
+  };
+
+  const [openModal, setOpenModal] = useState(false);
+
+  // Get Task
+  const [tasksList, setTasksList] = useState<TasksResponse | null>(null);
+  const navigate = useNavigate();
+  const getTasksList = async (page: number, title: string = "") => {
+    setLoading(true);
+
+    try {
+      const response = await GetAllTasks(page, pageSize, title);
+      setTasksList(response);
+    } catch (error: any) {
+      const errors = error?.response?.data?.additionalInfo?.errors;
+
+      if (errors) {
+        Object.values(errors).forEach((messages: any) => {
+          if (Array.isArray(messages)) {
+            messages.forEach((msg: string) => {
+              toast.error(msg);
+            });
+          }
+        });
+      } else {
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete Task
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+  const handleDelete = async () => {
+    try {
+      const response = await DeleteTaskById(selectedTaskId!.toString());
+      setOpenModal(false);
+      getTasksList(currentPage);
+      toast.success("Task deleted successfully");
+    } catch (error: any) {
+      const errors = error?.response?.data?.additionalInfo?.errors;
+
+      if (errors) {
+        Object.values(errors).forEach((messages: any) => {
+          if (Array.isArray(messages)) {
+            messages.forEach((msg: string) => {
+              toast.error(msg);
+            });
+          }
+        });
+      } else {
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      }
+    }
+  };
+  const [openViewModal, setOpenViewModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+  // View Task Detaiks
+  const getTask = async (id: number) => {
+    try {
+      const response = await GetTaskById(id.toString());
+      const taskData = response?.data ?? response;
+      console.log(taskData);
+      setSelectedTask(taskData);
+      setOpenViewModal(true);
+    } catch (error) {
+      toast.error("Unable to fetch data from API");
+    }
+  };
+
+  useEffect(() => {
+    if (!loginData || loginData?.userGroup !== "Manager") return;
+    getTasksList(currentPage, debouncedSearch);
+  }, [currentPage, pageSize, debouncedSearch]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchValue);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchValue]);
+if (loginData?.userGroup !== "Manager") {
+  return <TaskBoard />;
+}
+  return (
+    <>
+      <CrudHeader
+        title="Tasks"
+        buttonText="Add New Task"
+        onButtonClick={() => navigate("/dashboard/task-data")}
+      />
+
+      {/* Delete Modal */}
+      <Modal
+        show={openModal}
+        size="lg"
+        popup
+        onClose={() => setOpenModal(false)}>
+        {/* دعم الدارك مود للمودال */}
+        <ModalBody className="bg-white dark:bg-[#111112] border dark:border-zinc-800 rounded-lg p-6 shadow-lg">
+          <div className="mb-4">
+            <div className="text-center py-6">
+              <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-secondary" />
+
+              <h3 className="mb-3 text-xl font-medium text-gray-900 dark:text-zinc-100">
+                Are you sure you want to delete this task ?
+              </h3>
+            </div>
+
+            <div className="flex justify-center gap-4">
+              <button
+                className="bg-gray-200 dark:bg-zinc-800 text-secondary border border-secondary dark:border-zinc-700 text-gray-900 dark:text-zinc-200 px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-300 dark:hover:bg-zinc-700 transition-colors"
+                onClick={() => setOpenModal(false)}>
+                Cancel
+              </button>
+
+              <button
+                className="bg-red-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
+                onClick={handleDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </ModalBody>
+      </Modal>
+
+      {/* View Modal */}
+      <Modal
+        show={openViewModal}
+        size="2xl"
+        onClose={() => setOpenViewModal(false)}>
+        {/* دعم الدارك مود لمودال العرض الفردي */}
+        <ModalBody className="bg-white dark:bg-[#111112] border dark:border-zinc-800 rounded-xl p-8">
+          {/* Title */}
+          <h2 className="text-2xl font-bold text-[#315951] dark:text-[#41756a] mb-8 border-b dark:border-zinc-800 pb-4">
+            Task Details
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative">
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-gray-100 dark:bg-zinc-800 -translate-x-1/2"></div>
+
+            <div className="space-y-5">
+              <h3 className="text-[#315951] dark:text-[#41756a] font-bold text-lg mb-4">
+                Task Info
+              </h3>
+
+              <div className="flex items-center gap-3">
+                <MdEditSquare size={18} className="text-[#315951] dark:text-[#41756a]" />
+                <p className="text-sm dark:text-zinc-300">
+                  <span className="font-semibold text-gray-700 dark:text-zinc-400">Title: </span>
+                  <span className="text-[#315951] dark:text-[#41756a] font-bold">
+                    {selectedTask?.title}
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <MdDescription size={18} className="text-[#315951] dark:text-[#41756a]" />
+                <p className="text-sm dark:text-zinc-300">
+                  <span className="font-semibold text-gray-700 dark:text-zinc-400">
+                    Description:{" "}
+                  </span>
+                  <span className="text-[#315951] dark:text-[#41756a] font-bold">
+                    {selectedTask?.description}
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <GrStatusGood size={18} className="text-[#315951] dark:text-[#41756a]" />
+                <p className="text-sm dark:text-zinc-300">
+                  <span className="font-semibold text-gray-700 dark:text-zinc-400">Status: </span>
+                  <span className="text-[#315951] dark:text-[#41756a] font-bold">
+                    {selectedTask?.status}
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <MdDateRange size={18} className="text-[#315951] dark:text-[#41756a]" />
+                <p className="text-sm dark:text-zinc-300">
+                  <span className="font-semibold text-gray-700 dark:text-zinc-400">Created: </span>
+                  <span className="text-[#315951] dark:text-[#41756a] font-bold">
+                    {selectedTask?.creationDate
+                      ? new Date(selectedTask.creationDate).toLocaleDateString(
+                          "en-GB",
+                        )
+                      : "-"}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-5">
+              <h3 className="text-[#315951] dark:text-[#41756a] font-bold text-lg mb-4">
+                Employee Info
+              </h3>
+
+              <div className="flex items-center gap-3">
+                <FaUser size={16} className="text-[#315951] dark:text-[#41756a]" />
+                <p className="text-sm dark:text-zinc-300">
+                  <span className="font-semibold text-gray-700 dark:text-zinc-400">
+                    User Name:{" "}
+                  </span>
+                  <span className="text-[#315951] dark:text-[#41756a] font-bold">
+                    {selectedTask?.employee?.userName || "-"}
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <MdEmail size={16} className="text-[#315951] dark:text-[#41756a]" />
+                <p className="text-sm dark:text-zinc-300">
+                  <span className="font-semibold text-gray-700 dark:text-zinc-400">Email: </span>
+                  <span className="text-[#315951] dark:text-[#41756a] font-bold break-all">
+                    {(selectedTask?.employee as any)?.email || "-"}
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <FaEarthAmericas size={16} className="text-[#315951] dark:text-[#41756a]" />
+                <p className="text-sm dark:text-zinc-300">
+                  <span className="font-semibold text-gray-700 dark:text-zinc-400">Country: </span>{" "}
+                  <span className="text-[#315951] dark:text-[#41756a] font-bold">
+                    {(selectedTask?.employee as any)?.country || "-"}
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <BsRadioactive size={16} className="text-[#315951] dark:text-[#41756a]" />
+                <span className="font-semibold text-gray-700 dark:text-zinc-400">
+                  Is Avticvated:
+                </span>
+
+                <p className="text-sm dark:text-zinc-300">
+                  <span className="text-[#315951] dark:text-[#41756a] font-bold">
+                    {(selectedTask?.employee as any)?.isActivated === true
+                      ? "Active"
+                      : (selectedTask?.employee as any)?.isActivated === false
+                        ? "Inactive"
+                        : "-"}
+                  </span>
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <MdVerified size={16} className="text-[#315951] dark:text-[#41756a]" />
+                <span className="font-semibold text-gray-700 dark:text-zinc-400">isVerified:</span>
+
+                <p className="text-sm dark:text-zinc-300">
+                  <span className="text-[#315951] dark:text-[#41756a] font-bold">
+                    {(selectedTask?.employee as any)?.isVerified === true
+                      ? "Verified"
+                      : (selectedTask?.employee as any)?.isVerified === false
+                        ? "InVerified"
+                        : "-"}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-10 pt-6 border-t dark:border-zinc-800 flex justify-end">
+            <button
+              onClick={() => setOpenViewModal(false)}
+              className="px-6 py-2 bg-[#315951] text-white rounded-lg font-medium hover:bg-[#25443d] transition-colors">
+              Close
+            </button>
+          </div>
+        </ModalBody>
+      </Modal>
+
+      {/* Table Wrapper */}
+      {/* تم إدخال درجات ألوان الدارك مود للـ Wrapper الخارجي، وتهيئته للتحكم في مدخل السيرش */}
+      <div className="shadow-md mx-2 sm:mx-4 md:mx-8 lg:mx-10 rounded-lg bg-white dark:bg-[#111112] border border-transparent dark:border-zinc-900/50 transition-colors duration-300">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 dark:text-zinc-200 [&_input]:dark:bg-[#161619] [&_input]:dark:border-zinc-800 [&_input]:dark:text-zinc-100 [&_input]:dark:placeholder-zinc-500">
+          {/* Filteration */}
+          <Filter
+            searchValue={searchValue}
+            setSearchValue={setSearchValue}
+            placeholder="Search By Title"
+          />
+        </div>
+
+        {/* Table */}
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="loader"></div>
+          </div>
+        ) : tasksList?.data && tasksList.data.length > 0 ? (
+          <>
+            <div className="max-h-[500px] overflow-x-auto">
+               <Table className="min-w-[900px] border-collapse w-full">
+                {/* رأس الجدول بالـ Dark Mode */}
+                <TableHead className="bg-[#315951E5] dark:bg-[#1d3c36] text-white">
+                  <TableRow>
+                    <TableHeadCell className="border-r border-black/20 dark:border-zinc-700/40">
+                      <div className="flex items-center gap-2 ">
+                        Title
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
+
+                    <TableHeadCell className="border-r border-black/20 dark:border-zinc-700/40">
+                      <div className="flex items-center gap-2 cursor-pointer text-md">
+                        Status
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
+
+                    <TableHeadCell className="border-r border-black/20 dark:border-zinc-700/40">
+                      <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
+                        User
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
+
+                    <TableHeadCell className="border-r border-black/20 dark:border-zinc-700/40">
+                      <div className="flex items-center gap-2 cursor-pointer">
+                        Project
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
+
+                    <TableHeadCell className="border-r border-black/20 dark:border-zinc-700/40">
+                      <div className="flex items-center gap-2 cursor-pointer">
+                        Created Date
+                        <MdOutlineUnfoldMore size={20} />
+                      </div>
+                    </TableHeadCell>
+
+                    <TableHeadCell></TableHeadCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody className="divide-y-0">
+                  {tasksList?.data?.map((task) => (
+                    <TableRow
+                      key={task.id}
+                      // تعديل الأسطر الفردية والزوجية لتتناسب مع درجات الدارك مود بدلاً من الرمادي والأبيض الفاتح
+                      className="odd:bg-white odd:dark:bg-[#111112] even:bg-[#F5F5F5] even:dark:bg-[#161619] border-none transition-colors duration-200">
+                      <TableCell className="whitespace-nowrap font-medium text-black dark:text-zinc-200 border-none">
+                        {task.title}
+                      </TableCell>
+
+                      <TableCell className="border-none text-lg">
+                        {(() => {
+                          const statusStyles: Record<string, string> = {
+                            todo: "bg-[#E4E2F5] dark:bg-[#2d2a4a] text-white dark:text-zinc-200",
+                            inprogress: "bg-[#EF9B28A3] dark:bg-[#613c0b] text-white dark:text-zinc-200",
+                            done: "bg-[#009247] dark:bg-[#044724] text-white dark:text-zinc-200",
+                          };
+
+                          const statusLabels: Record<string, string> = {
+                            todo: "Todo",
+                            inprogress: "in progress",
+                            done: "done",
+                          };
+
+                          const normalizedStatus =
+                            task.status?.toLowerCase().replace(/\s+/g, "") ||
+                            "";
+
+                          const currentStyle =
+                            statusStyles[normalizedStatus] ||
+                            "bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300";
+                          const currentLabel =
+                            statusLabels[normalizedStatus] || task.status;
+
+                          return (
+                            <span
+                              className={`px-4 py-1.5 rounded-full text-xs font-normal ${currentStyle}`}>
+                              {currentLabel}
+                            </span>
+                          );
+                        })()}
+                      </TableCell>
+
+                      <TableCell className="text-black dark:text-zinc-300 border-none text-lg">
+                        {task.employee?.userName || "No User"}
+                      </TableCell>
+
+                      <TableCell className="text-black dark:text-zinc-300 border-none text-lg">
+                        {task.project?.title || "No Project"}
+                      </TableCell>
+
+                      <TableCell className="text-black dark:text-zinc-300 border-none text-lg">
+                        {new Date(task.creationDate).toLocaleDateString(
+                          "en-GB",
+                        )}
+                      </TableCell>
+
+                      <TableCell className="relative border-none text-lg">
+                        <div className="flex justify-center">
+                          <button
+                            onClick={() => toggleMenu(task.id)} 
+                            className="text-[#315951E5] dark:text-[#41756a] hover:bg-gray-100 dark:hover:bg-zinc-800 p-1 rounded-full transition-colors">
+                            <BsThreeDotsVertical size={25} />
+                          </button>
+
+                          {openMenuId === task.id && (
+                            <>
+                              <div
+                                className="fixed inset-0 z-[60] bg-transparent"
+                                onClick={() => setOpenMenuId(null)}></div>
+
+                              {/* قائمة الخيارات (تعديل خلفيتها وحدودها للدارك مود) */}
+                              <div className="fixed right-20 bottom-30 mt-10 w-32 bg-[#3159517c] dark:bg-[#161619] border dark:border-zinc-800 shadow-[0_10px_30px_rgba(0,0,0,0.2)] rounded-xl z-[9999] p-1.5 ">
+                                <div className="flex flex-col gap-0.5">
+                                  {/* View */}
+                                  <button
+                                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-green-50 dark:hover:bg-green-950/30 transition-all group text-white"
+                                    onClick={() => {
+                                      getTask(task.id);
+                                      setOpenViewModal(true);
+                                      setOpenMenuId(null);
+                                    }}>
+                                    <div className="p-1 bg-green-50 dark:bg-green-950 rounded-md group-hover:bg-green-100 dark:group-hover:bg-green-900 transition-colors">
+                                      <HiOutlineEye
+                                        size={14}
+                                        className="text-green-600 dark:text-green-400"
+                                      />
+                                    </div>
+                                    <span className="text-xs font-semibold text-gray-700 dark:text-zinc-300 group-hover:text-green-600 dark:group-hover:text-green-400">
+                                      View
+                                    </span>
+                                  </button>
+
+                                  {/* Edit */}
+                                  <button
+                                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-yellow-50 dark:hover:bg-yellow-950/30 transition-all group text-white"
+                                    onClick={() => {
+                                      setOpenMenuId(null);
+                                      navigate(
+                                        `/dashboard/edit-task/${task.id}`,
+                                      );
+                                    }}>
+                                    <div className="p-1 bg-yellow-50 dark:bg-yellow-950 rounded-md group-hover:bg-yellow-100 dark:group-hover:bg-yellow-900 transition-colors">
+                                      <HiOutlinePencilAlt
+                                        size={14}
+                                        className="text-yellow-500 dark:text-yellow-400"
+                                      />
+                                    </div>
+                                    <span className="text-xs font-semibold text-gray-700 dark:text-zinc-300 group-hover:text-yellow-600 dark:group-hover:text-yellow-400">
+                                      Edit
+                                    </span>
+                                  </button>
+
+                                  {/* Delete */}
+                                  <button
+                                    className="flex items-center gap-2 text-white px-2 py-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-all group"
+                                    onClick={() => {
+                                      setSelectedTaskId(task.id);
+                                      setOpenModal(true);
+                                      setOpenMenuId(null);
+                                    }}>
+                                    <div className="p-1 bg-red-50 dark:bg-red-950 rounded-md group-hover:bg-red-100 dark:group-hover:bg-red-900 transition-colors">
+                                      <HiOutlineTrash
+                                        size={14}
+                                        className="text-red-600 dark:text-red-400"
+                                      />
+                                    </div>
+
+                                    <span className="text-xs font-semibold text-gray-700 dark:text-zinc-300 group-hover:text-red-600 dark:group-hover:text-red-400">
+                                      Delete
+                                    </span>
+                                  </button>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+
+            <Pagination
+              currentPage={tasksList?.pageNumber || 1}
+              totalRecords={tasksList?.totalNumberOfRecords || 0}
+              pageSize={tasksList?.pageSize || 10}
+              onPageChange={(page) => {
+                setCurrentPage(page);
+              }}
+              onPageSizeChange={(size) => {
+                setPageSize(size);
+                setCurrentPage(1);
+              }}
+            />
+          </>
+        ) : (
+          <NoData />
+        )}
+      </div>
+    </>
+  );
+}

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: "upskilling-egypt.com:3003/api/v1", // غيرها بالـ API بتاعك
+  baseURL: "https://upskilling-egypt.com:3003/api/v1", 
   timeout: 5000,
 });
 
@@ -20,7 +20,13 @@ axiosClient.interceptors.request.use((config) => {
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.log("Error:", error.response?.data || error.message);
+    const token = localStorage.getItem("token");
+
+    if (error.response?.status === 401 && token) {
+      localStorage.clear();
+      window.location.href = "/login";
+    }
+
     return Promise.reject(error);
   }
 );
