@@ -161,10 +161,10 @@ export default function TaskData() {
       <div className="flex justify-center items-center mt-10 rounded-lg overflow-hidden">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-full max-w-2xl bg-white shadow-md p-6 space-y-5">
+          className="w-full max-w-2xl bg-white dark:bg-[#111112]   shadow-md p-6 space-y-5">
           {/* TITLE */}
           <div>
-            <label className="block mb-2 text-[#4F4F4F] font-medium">
+            <label className="block mb-2 text-[#4F4F4F] font-medium dark:text-white">
               Title
             </label>
 
@@ -174,7 +174,7 @@ export default function TaskData() {
               })}
               type="text"
               placeholder="Enter task title"
-              className="w-full border border-[#ECECEC] px-4 py-2 outline-none rounded-xl"
+              className="w-full border border-[#ECECEC] px-4 py-2 outline-none rounded-xl dark:bg-[#222] dark:text-[#fff] dark:placeholder:text-[#888] "
             />
 
             {errors.title && (
@@ -186,7 +186,7 @@ export default function TaskData() {
 
           {/* DESCRIPTION */}
           <div>
-            <label className="block mb-2 text-[#4F4F4F] font-medium">
+            <label className="block mb-2 text-[#4F4F4F] font-medium dark:text-white">
               Description
             </label>
 
@@ -196,7 +196,7 @@ export default function TaskData() {
               })}
               rows={4}
               placeholder="Enter description"
-              className="w-full border border-[#ECECEC] px-4 py-2 outline-none rounded-xl"
+              className="w-full border border-[#ECECEC] px-4 py-2 outline-none rounded-xl dark:bg-[#222] dark:text-[#fff]  dark:placeholder:text-[#888]"
             />
 
             {errors.description && (
@@ -210,7 +210,7 @@ export default function TaskData() {
           <div className="grid grid-cols-2 gap-4">
             {/* PROJECT */}
             <div>
-              <label className="block mb-2 font-medium text-[#4F4F4F]">
+              <label className="block mb-2 font-medium text-[#4F4F4F] dark:text-white">
                 Project
               </label>
 
@@ -218,7 +218,7 @@ export default function TaskData() {
                 {...register("projectId", {
                   required: "Project is required",
                 })}
-                className="w-full border border-[#ECECEC] px-4 py-2 outline-none rounded-xl">
+                className="w-full border border-[#ECECEC] px-4 py-2 outline-none rounded-xl dark:bg-[#222] dark:text-[#fff] dark:placeholder:text-[#888] ">
                 <option value="">Select Project</option>
 
                 {Array.isArray(projectsList) &&
@@ -238,7 +238,7 @@ export default function TaskData() {
 
             {/* USER */}
             <div>
-              <label className="block mb-2 font-medium text-[#4F4F4F]">
+              <label className="block mb-2 font-medium text-[#4F4F4F] dark:text-white">
                 User
               </label>
 
@@ -246,7 +246,7 @@ export default function TaskData() {
                 {...register("employeeId", {
                   required: "User is required",
                 })}
-                className="w-full border border-[#ECECEC] px-4 py-2 outline-none rounded-xl">
+                className="w-full border border-[#ECECEC] px-4 py-2 outline-none rounded-xl dark:bg-[#222] dark:text-[#fff] dark:placeholder:text-[#888] ">
                 <option value="">Select User</option>
                 {Array.isArray(usersList) &&
                   usersList.map((user: any) => (
@@ -269,7 +269,7 @@ export default function TaskData() {
             <button
               type="button"
               onClick={() => navigate("/dashboard/task-list")}
-              className="px-6 py-2 border border-[#ECECEC] text-[#4F4F4F] rounded-xl">
+              className="px-6 py-2 border border-[#ECECEC] text-[#4F4F4F] dark:bg-white rounded-xl">
               Cancel
             </button>
 
