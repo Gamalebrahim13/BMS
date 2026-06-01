@@ -116,11 +116,11 @@ const getProjectDetails = async () => {
       <div className="flex justify-center items-center mt-10 rounded-lg overflow-hidden">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-full max-w-2xl bg-white shadow-md p-6 space-y-5"
+          className="w-full max-w-2xl bg-white dark:bg-[#111112]   shadow-md p-6 space-y-5"
         >
           
           <div className="mb-3">
-            <label className="block mb-2 text-[#4F4F4F] font-medium">
+            <label className="block mb-2 text-[#4F4F4F] font-medium dark:text-white">
               Title
             </label>
 
@@ -130,7 +130,7 @@ const getProjectDetails = async () => {
               {...register("title", {
                 required: "Title is required",
               })}
-              className="w-full border border-[#ECECEC] px-4 py-2 outline-none rounded-xl placeholder:text-[#C1C1C1]"
+              className="w-full border border-[#ECECEC] px-4 py-2 outline-none rounded-xl dark:bg-[#222] dark:text-[#fff] dark:placeholder:text-[#888]"
             />
 
             {errors.title && (
@@ -142,7 +142,7 @@ const getProjectDetails = async () => {
 
           
           <div>
-            <label className="block my-2 font-medium text-[#4F4F4F]">
+            <label className="block my-2 font-medium text-[#4F4F4F] dark:text-white">
               Description
             </label>
 
@@ -152,7 +152,7 @@ const getProjectDetails = async () => {
               {...register("description", {
                 required: "Description is required",
               })}
-              className="w-full border border-[#ECECEC] px-4 py-2 outline-none rounded-xl placeholder:text-[#C1C1C1]"
+              className="w-full border border-[#ECECEC] px-4 py-2 outline-none rounded-xl dark:bg-[#222] dark:text-[#fff] dark:placeholder:text-[#888]"
             />
 
             {errors.description && (
@@ -167,7 +167,7 @@ const getProjectDetails = async () => {
             <button
               type="button"
               onClick={() => navigate("/dashboard/project-list")}
-              className="px-6 py-2 border border-[#ECECEC] text-[#4F4F4F] rounded-xl"
+              className="px-6 py-2 border border-[#ECECEC] dark:bg-white text-[#4F4F4F] rounded-xl"
             >
               Cancel
             </button>

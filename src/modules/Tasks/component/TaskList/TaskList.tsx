@@ -157,11 +157,11 @@ if (loginData?.userGroup !== "Manager") {
         size="lg"
         popup
         onClose={() => setOpenModal(false)}>
-        {/* دعم الدارك مود للمودال */}
-        <ModalBody className="bg-white dark:bg-[#111112] border dark:border-zinc-800 rounded-lg p-6 shadow-lg">
+
+        <ModalBody className="bg-white dark:bg-[#111112]  text-gray-900 dark:text-zinc-100 rounded-lg p-6 shadow-lg">
           <div className="mb-4">
             <div className="text-center py-6">
-              <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-secondary" />
+              <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-red-500 dark:text-red-400" />
 
               <h3 className="mb-3 text-xl font-medium text-gray-900 dark:text-zinc-100">
                 Are you sure you want to delete this task ?
@@ -190,7 +190,7 @@ if (loginData?.userGroup !== "Manager") {
         show={openViewModal}
         size="2xl"
         onClose={() => setOpenViewModal(false)}>
-        {/* دعم الدارك مود لمودال العرض الفردي */}
+        
         <ModalBody className="bg-white dark:bg-[#111112] border dark:border-zinc-800 rounded-xl p-8">
           {/* Title */}
           <h2 className="text-2xl font-bold text-[#315951] dark:text-[#41756a] mb-8 border-b dark:border-zinc-800 pb-4">
@@ -334,7 +334,7 @@ if (loginData?.userGroup !== "Manager") {
       </Modal>
 
       {/* Table Wrapper */}
-      {/* تم إدخال درجات ألوان الدارك مود للـ Wrapper الخارجي، وتهيئته للتحكم في مدخل السيرش */}
+
       <div className="shadow-md mx-2 sm:mx-4 md:mx-8 lg:mx-10 rounded-lg bg-white dark:bg-[#111112] border border-transparent dark:border-zinc-900/50 transition-colors duration-300">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 dark:text-zinc-200 [&_input]:dark:bg-[#161619] [&_input]:dark:border-zinc-800 [&_input]:dark:text-zinc-100 [&_input]:dark:placeholder-zinc-500">
           {/* Filteration */}
@@ -354,38 +354,38 @@ if (loginData?.userGroup !== "Manager") {
           <>
             <div className="max-h-[500px] overflow-x-auto">
                <Table className="min-w-[900px] border-collapse w-full">
-                {/* رأس الجدول بالـ Dark Mode */}
+                
                 <TableHead className="bg-[#315951E5] dark:bg-[#1d3c36] text-white">
                   <TableRow>
-                    <TableHeadCell className="border-r border-black/20 dark:border-zinc-700/40">
+                    <TableHeadCell className=" dark:text-zinc-100 border-r border-black/10 dark:border-zinc-900">
                       <div className="flex items-center gap-2 ">
                         Title
                         <MdOutlineUnfoldMore size={20} />
                       </div>
                     </TableHeadCell>
 
-                    <TableHeadCell className="border-r border-black/20 dark:border-zinc-700/40">
+                    <TableHeadCell className=" dark:text-zinc-100 border-r border-black/10 dark:border-zinc-900">
                       <div className="flex items-center gap-2 cursor-pointer text-md">
                         Status
                         <MdOutlineUnfoldMore size={20} />
                       </div>
                     </TableHeadCell>
 
-                    <TableHeadCell className="border-r border-black/20 dark:border-zinc-700/40">
+                    <TableHeadCell className=" dark:text-zinc-100 border-r border-black/10 dark:border-zinc-900">
                       <div className="flex items-center gap-2 cursor-pointer px-3 py-1">
                         User
                         <MdOutlineUnfoldMore size={20} />
                       </div>
                     </TableHeadCell>
 
-                    <TableHeadCell className="border-r border-black/20 dark:border-zinc-700/40">
+                   <TableHeadCell className=" dark:text-zinc-100 border-r border-black/10 dark:border-zinc-900">
                       <div className="flex items-center gap-2 cursor-pointer">
                         Project
                         <MdOutlineUnfoldMore size={20} />
                       </div>
                     </TableHeadCell>
 
-                    <TableHeadCell className="border-r border-black/20 dark:border-zinc-700/40">
+                   <TableHeadCell className=" dark:text-zinc-100 border-r border-black/10 dark:border-zinc-900">
                       <div className="flex items-center gap-2 cursor-pointer">
                         Created Date
                         <MdOutlineUnfoldMore size={20} />
@@ -399,7 +399,6 @@ if (loginData?.userGroup !== "Manager") {
                   {tasksList?.data?.map((task) => (
                     <TableRow
                       key={task.id}
-                      // تعديل الأسطر الفردية والزوجية لتتناسب مع درجات الدارك مود بدلاً من الرمادي والأبيض الفاتح
                       className="odd:bg-white odd:dark:bg-[#111112] even:bg-[#F5F5F5] even:dark:bg-[#161619] border-none transition-colors duration-200">
                       <TableCell className="whitespace-nowrap font-medium text-black dark:text-zinc-200 border-none">
                         {task.title}
@@ -466,8 +465,8 @@ if (loginData?.userGroup !== "Manager") {
                                 className="fixed inset-0 z-[60] bg-transparent"
                                 onClick={() => setOpenMenuId(null)}></div>
 
-                              {/* قائمة الخيارات (تعديل خلفيتها وحدودها للدارك مود) */}
-                              <div className="fixed right-20 bottom-30 mt-10 w-32 bg-[#3159517c] dark:bg-[#161619] border dark:border-zinc-800 shadow-[0_10px_30px_rgba(0,0,0,0.2)] rounded-xl z-[9999] p-1.5 ">
+                             
+                              <div className="fixed right-20 bottom-30 mt-10 w-32 bg-[#3159517c] dark:bg-[#161619]  dark:border-zinc-800 shadow-[0_10px_30px_rgba(0,0,0,0.2)] rounded-xl z-[9999] p-1.5 ">
                                 <div className="flex flex-col gap-0.5">
                                   {/* View */}
                                   <button
