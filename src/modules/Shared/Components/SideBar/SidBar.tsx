@@ -37,7 +37,6 @@ return (
         border: "none",
         height: "100vh",
         zIndex: 999,
-        // الـ البلور هنا مركز على جسم المنيو نفسه فقط في الموبايل
         "& .ps-sidebar-container": {
           background: "rgba(14, 56, 47, 0.4) !important", 
           backdropFilter: "blur(12px)",
@@ -46,7 +45,6 @@ return (
         ".dark & .ps-sidebar-container": {
           background: "rgba(22, 22, 25, 0.5) !important", 
         },
-        // الـ Backdrop الخلفية مفيهاش بلور، مجرد لون شفاف خفيف
         "& .ps-sidebar-backdrop": {
           backgroundColor: "rgba(0, 0, 0, 0.4) !important",
           backdropFilter: "none !important",
@@ -97,7 +95,6 @@ return (
         </button>
       </div>
 
-      {/* التعديل هنا: أضفنا onClick عشان يقفل المنيو علطول في الموبايل أول ما تضغط على أي لينك */}
       <Menu
         onClick={() => {
           if (window.innerWidth < 768) {
