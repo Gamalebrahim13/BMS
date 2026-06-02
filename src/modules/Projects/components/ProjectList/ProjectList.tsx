@@ -550,7 +550,7 @@ export default function ProjectList() {
                                     onClick={() => {
                                       setOpenMenuId(null);
                                       navigate(
-                                        `/dashboard/edit-task/${project.id}`,
+                                        `/dashboard/project-data/${project.id}`,
                                       );
                                     }}>
                                     <div className="p-1 bg-yellow-50 dark:bg-yellow-950 rounded-md group-hover:bg-yellow-100 dark:group-hover:bg-yellow-900 transition-colors">
